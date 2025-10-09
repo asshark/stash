@@ -94,6 +94,10 @@ const messages = defineMessages({
     id: "statistics",
     defaultMessage: "Statistics",
   },
+  report: {
+    id: "report",
+    defaultMessage: "Report",
+  },
 });
 
 const allMenuItems: IMenuItem[] = [
@@ -158,6 +162,13 @@ const allMenuItems: IMenuItem[] = [
     icon: faTag,
     hotkey: "g t",
     userCreatable: true,
+  },
+  {
+    name: "report",
+    message: messages.report,
+    href: "/report",
+    icon: faChartColumn,
+    hotkey: "g r",
   },
 ];
 

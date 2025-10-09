@@ -74,6 +74,7 @@ const Galleries = lazyComponent(
 const Groups = lazyComponent(() => import("./components/Groups/Groups"));
 const Tags = lazyComponent(() => import("./components/Tags/Tags"));
 const Images = lazyComponent(() => import("./components/Images/Images"));
+const Report = lazyComponent(() => import("./components/Report/Report"));
 const Setup = lazyComponent(() => import("./components/Setup/Setup"));
 const Migrate = lazyComponent(() => import("./components/Setup/Migrate"));
 
@@ -260,6 +261,7 @@ export const App: React.FC = () => {
             <Route path="/tags" component={Tags} />
             <Route path="/studios" component={Studios} />
             <Route path="/groups" component={Groups} />
+            <Route path="/report" component={Report} />
             <Route path="/stats" component={Stats} />
             <Route path="/settings" component={Settings} />
             <Route
