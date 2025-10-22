@@ -4,6 +4,7 @@ import {
   FetchResult,
   NetworkStatus,
   useQuery,
+  gql,
 } from "@apollo/client";
 import { Modifiers } from "@apollo/client/cache";
 import {
@@ -2936,6 +2937,16 @@ export const mutateMetadataAutoTag = (input: GQL.AutoTagMetadataInput) =>
 export const mutateMetadataGenerate = (input: GQL.GenerateMetadataInput) =>
   client.mutate<GQL.MetadataGenerateMutation>({
     mutation: GQL.MetadataGenerateDocument,
+    variables: { input },
+  });
+
+export const mutateClipCopy = (input: any) =>
+  client.mutate({
+    mutation: gql`
+      mutation ClipCopy($input: ClipCopyInput!) {
+        clipCopy(input: $input)
+      }
+    `,
     variables: { input },
   });
 

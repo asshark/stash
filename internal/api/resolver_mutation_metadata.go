@@ -12,6 +12,7 @@ import (
 	"github.com/stashapp/stash/internal/manager/config"
 	"github.com/stashapp/stash/internal/manager/task"
 	"github.com/stashapp/stash/pkg/logger"
+	"github.com/stashapp/stash/pkg/models"
 )
 
 func (r *mutationResolver) MetadataScan(ctx context.Context, input manager.ScanMetadataInput) (string, error) {
@@ -110,6 +111,35 @@ func (r *mutationResolver) MetadataCleanGenerated(ctx context.Context, input tas
 		BlobCleaner:              mgr.Repository.Blob,
 	}
 	jobID := mgr.JobManager.Add(ctx, "Cleaning generated files...", t)
+
+	return strconv.Itoa(jobID), nil
+}
+
+func (r *mutationResolver) ClipCopy(ctx context.Context, input ClipCopyInput) (string, error) {
+	mgr := manager.GetInstance()
+
+	// Convert GraphQL filter to models.ClipFilterType
+	var clipFilter *models.ClipFilterType
+	if input.Filter != nil {
+		clipFilter = input.Filter
+	}
+
+	// Convert GraphQL input to manager options
+	options := manager.ClipCopyOptions{
+		SourceFolders:     input.SourceFolders,
+		DestinationFolder: input.DestinationFolder,
+		PreserveStructure: input.PreserveStructure != nil && *input.PreserveStructure,
+		Overwrite:         input.Overwrite != nil && *input.Overwrite,
+		DryRun:            input.DryRun != nil && *input.DryRun,
+		MoveFiles:         input.MoveFiles != nil && *input.MoveFiles,
+		Filter:            clipFilter,
+	}
+
+	t := &manager.ClipCopyJob{
+		Options:    options,
+		Repository: mgr.Repository,
+	}
+	jobID := mgr.JobManager.Add(ctx, "Copying clips...", t)
 
 	return strconv.Itoa(jobID), nil
 }

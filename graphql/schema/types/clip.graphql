@@ -1,0 +1,89 @@
+input ClipCopyInput {
+  "Source folders to search for clips"
+  sourceFolders: [String!]!
+  "Destination folder for copied clips"
+  destinationFolder: String!
+  "Filter criteria for selecting clips to copy"
+  filter: ClipFilterType
+  "Whether to create subdirectories in destination based on source structure"
+  preserveStructure: Boolean
+  "Whether to overwrite existing files in destination"
+  overwrite: Boolean
+  "Whether this is a dry run (no actual copying)"
+  dryRun: Boolean
+  "Whether to move files instead of copying"
+  moveFiles: Boolean
+}
+
+input ClipFilterType {
+  AND: ClipFilterType
+  OR: ClipFilterType
+  NOT: ClipFilterType
+  
+  id: IntCriterionInput
+  title: StringCriterionInput
+  code: StringCriterionInput
+  details: StringCriterionInput
+  "Filter by file checksum"
+  checksum: StringCriterionInput
+  "Filter by path"
+  path: StringCriterionInput
+  "Filter by file count"
+  fileCount: IntCriterionInput
+  "Filter by rating expressed as 1-100"
+  rating100: IntCriterionInput
+  "Filter by organized"
+  organized: Boolean
+  "Filter by o-counter"
+  oCounter: IntCriterionInput
+  "Filter by resolution"
+  resolution: ResolutionCriterionInput
+  "Filter by orientation"
+  orientation: OrientationCriterionInput
+  "Filter by framerate"
+  framerate: IntCriterionInput
+  "Filter by bitrate"
+  bitrate: IntCriterionInput
+  "Filter by video codec"
+  videoCodec: StringCriterionInput
+  "Filter by audio codec"
+  audioCodec: StringCriterionInput
+  "Filter by duration (in seconds)"
+  duration: IntCriterionInput
+  "Filter to only include clips which have markers. `true` or `false`"
+  hasMarkers: String
+  "Filter to only include clips missing this property"
+  isMissing: String
+  "Filter to only include clips with this studio"
+  studios: HierarchicalMultiCriterionInput
+  "Filter to only include clips with these tags"
+  tags: HierarchicalMultiCriterionInput
+  "Filter by tag count"
+  tagCount: IntCriterionInput
+  "Filter to only include clips with performers with these tags"
+  performerTags: HierarchicalMultiCriterionInput
+  "Filter to only include clips with these performers"
+  performers: MultiCriterionInput
+  "Filter by performer count"
+  performerCount: IntCriterionInput
+  "Filter clips that have performers that have been favorited"
+  performerFavorite: Boolean
+  "Filter clips by performer age at time of clip"
+  performerAge: IntCriterionInput
+  "Filter by date"
+  date: DateCriterionInput
+  "Filter by url"
+  url: StringCriterionInput
+  "Filter by galleries"
+  galleries: MultiCriterionInput
+  "Filter by movie"
+  movies: MultiCriterionInput
+  "Filter by movie count"
+  movieCount: IntCriterionInput
+  "Filter by file size"
+  fileSize: IntCriterionInput
+  "Filter by filename"
+  filename: StringCriterionInput
+  "Filter by parent folder"
+  parentFolder: HierarchicalMultiCriterionInput
+}

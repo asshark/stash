@@ -487,6 +487,8 @@ type Mutation {
   metadataCleanGenerated(input: CleanGeneratedInput!): ID!
   "Identifies scenes using scrapers. Returns the job ID"
   metadataIdentify(input: IdentifyMetadataInput!): ID!
+  "Copy clips based on filter criteria. Returns the job ID"
+  clipCopy(input: ClipCopyInput!): ID!
 
   "Migrate generated files for the current hash naming"
   migrateHashNaming: ID!
