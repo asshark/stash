@@ -1,0 +1,165 @@
+# Docker Compose configuration for Stash on Synology NAS
+# Using CUSTOM-BUILT Docker image from source
+#
+# This configuration uses a locally built Docker image instead of the
+# official stashapp/stash:latest image from Docker Hub.
+#
+# IMPORTANT: Before starting:
+# 1. Build the Docker image using build_and_deploy.sh script
+# 2. Update path mappings in this file to match your Synology setup
+# 3. Run migrate_database.py to update database paths
+# 4. Copy config files and database to appropriate directories
+
+services:
+  stash:
+    # Use locally built image instead of pulling from Docker Hub
+    # This image was built from your modified source code
+    image: stash/custom:latest
+    
+    container_name: stash-custom
+    restart: unless-stopped
+    
+    ports:
+      - "9999:9999"
+    
+    # For DLNA functionality, uncomment the following and comment out ports above:
+    # network_mode: host
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "10"
+        max-size: "2m"
+    
+    environment:
+      # Stash configuration paths inside container
+      - STASH_STASH=/data/
+      - STASH_GENERATED=/generated/
+      - STASH_METADATA=/metadata/
+      - STASH_CACHE=/cache/
+      - STASH_PORT=9999
+      
+      # Optional: Set timezone
+      - TZ=Europe/Warsaw
+      
+      # Optional: Set log level (trace, debug, info, warning, error)
+      # - STASH_LOG_LEVEL=info
+    
+    volumes:
+      # System time synchronization
+      - /etc/localtime:/etc/localtime:ro
+      
+      # Stash configuration directory (includes config.yml, scrapers, plugins, DATABASE)
+      # IMPORTANT: Database file (stash-go.sqlite) should be HERE in config directory!
+      # This is where your migrated config files, plugins AND database should be placed
+      - /volume2/video.xxx.clips/stash/config:/root/.stash
+      
+      # Blobs storage (scene covers, images)
+      # You mentioned this already exists at this location
+      - /volume2/video.xxx.clips/stash/blobs:/blobs
+      
+      # Generated content (screenshots, previews, transcodes, sprites)
+      # Using existing 'gen' folder from Windows installation
+      - /volume2/video.xxx.clips/stash/gen:/generated
+      
+      # Metadata storage (will be created if doesn't exist)
+      - /volume2/video.xxx.clips/stash/metadata:/metadata
+      
+      # Cache directory
+      - /volume2/video.xxx.clips/stash/cache:/cache
+      
+      # ============================================================
+      # MEDIA LIBRARY MAPPINGS
+      # ============================================================
+      # Map your media libraries to paths inside the container
+      # These paths should match the paths you set in path_mapping.txt
+      # and after running migrate_database.py
+      #
+      # IMPORTANT: Update these paths to match your actual Synology structure!
+      # The left side is your Synology path, the right side is the path 
+      # that will be stored in the database after migration
+      #
+      # Example mappings (UPDATE THESE):
+      - /volume2/video.xxx.clips/Clips:/data/Clips
+      - /volumeUSB2/usbshare/Clips2:/data/Clips2
+      - /volumeUSB2/usbshare/Clips21:/data/Clips21
+      - /volumeUSB2/usbshare/PornHubs:/data/PornHubs
+      - /volumeUSB2/usbshare/clips.worse:/data/clips.worse
+      - /volumeUSB1/usbshare/Clips30:/data/Clips30
+      - /volumeUSB1/usbshare/Clips31:/data/Clips31
+      
+      # Add more library mappings as needed following the same pattern
+
+    # Optional: Set user/group IDs for file permissions
+    # Uncomment and adjust if you have permission issues
+    # user: "1000:1000"
+
+# ============================================================
+# NOTES FOR CUSTOM BUILD:
+# ============================================================
+# This configuration uses a custom-built image. To build and deploy:
+#
+# 1. On Windows (build machine):
+#    - Run: build_and_deploy.sh windows
+#    - This will build the image and save it to a tar file
+#
+# 2. Transfer to Synology:
+#    - Copy stash-custom.tar to Synology
+#    - Load image: docker load -i stash-custom.tar
+#
+# 3. Or build directly on Synology (if resources allow):
+#    - Run: build_and_deploy.sh synology
+#
+# 4. Start container:
+#    - docker compose -f docker-compose-custom-build.yml up -d
+#
+# 5. View logs:
+#    - docker compose -f docker-compose-custom-build.yml logs -f
+#
+# ============================================================
+# UPDATING YOUR CUSTOM BUILD:
+# ============================================================
+# When you make changes to the source code:
+#
+# 1. Rebuild image:
+#    - Run: build_and_deploy.sh windows
+#    or
+#    - Run: build_and_deploy.sh synology (if building on Synology)
+#
+# 2. Restart container with new image:
+#    - docker compose -f docker-compose-custom-build.yml down
+#    - docker compose -f docker-compose-custom-build.yml up -d
+#
+# ============================================================
+# ADVANTAGES OF CUSTOM BUILD:
+# ============================================================
+# - Use your own modifications and features
+# - Test development branches before official release
+# - Include custom patches and fixes
+# - Full control over build process and dependencies
+# - No waiting for official releases
+#
+# ============================================================
+# PLUGIN MANAGEMENT:
+# ============================================================
+# Plugins should be placed in:
+# /volume2/video.xxx.clips/stash/config/plugins/
+#
+# Structure:
+# plugins/
+# ├── plugin1/
+# │   ├── plugin1.yml
+# │   └── plugin1.py
+# ├── plugin2/
+# │   ├── plugin2.yml
+# │   └── plugin2.py
+# └── ...
+#
+# You can edit plugins externally via:
+# - SMB/CIFS share
+# - File Station
+# - SSH/terminal
+#
+# After editing plugins, restart Stash:
+# docker compose -f docker-compose-custom-build.yml restart
+

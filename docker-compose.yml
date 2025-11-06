@@ -1,0 +1,139 @@
+# Docker Compose configuration for Stash on Synology NAS
+# Migration from Windows to Synology Docker setup
+#
+# IMPORTANT: Before starting:
+# 1. Update path mappings in this file to match your Synology setup
+# 2. Run migrate_database.py to update database paths
+# 3. Copy config files and database to appropriate directories
+
+services:
+  stash:
+    image: stashapp/stash:latest
+    container_name: stash
+    restart: unless-stopped
+    
+    ports:
+      - "9999:9999"
+    
+    # For DLNA functionality, uncomment the following and comment out ports above:
+    # network_mode: host
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "10"
+        max-size: "2m"
+    
+    environment:
+      # Stash configuration paths inside container
+      - STASH_STASH=/data/
+      - STASH_GENERATED=/generated/
+      - STASH_METADATA=/metadata/
+      - STASH_CACHE=/cache/
+      - STASH_PORT=9999
+      
+      # Optional: Set timezone
+      - TZ=Europe/Warsaw
+    
+    volumes:
+      # System time synchronization
+      - /etc/localtime:/etc/localtime:ro
+      
+      # Stash configuration directory (includes config.yml, scrapers, plugins)
+      # This is where your migrated config files and plugins should be placed
+      - /volume2/video.xxx.clips/stash/config:/root/.stash
+      
+      # Database directory
+      # Place your migrated stash-go.sqlite here
+      - /volume2/video.xxx.clips/stash/database:/root/.stash/database
+      
+      # Blobs storage (scene covers, images)
+      # You mentioned this already exists at this location
+      - /volume2/video.xxx.clips/stash/blobs:/blobs
+      
+      # Generated content (screenshots, previews, transcodes, sprites)
+      - /volume2/video.xxx.clips/stash/generated:/generated
+      
+      # Metadata storage
+      - /volume2/video.xxx.clips/stash/metadata:/metadata
+      
+      # Cache directory
+      - /volume2/video.xxx.clips/stash/cache:/cache
+      
+      # ============================================================
+      # MEDIA LIBRARY MAPPINGS
+      # ============================================================
+      # Map your media libraries to paths inside the container
+      # These paths should match the paths you set in path_mapping.txt
+      # and after running migrate_database.py
+      #
+      # IMPORTANT: Update these paths to match your actual Synology structure!
+      # The left side is your Synology path, the right side is the path 
+      # that will be stored in the database after migration
+      #
+      # Example mappings (UPDATE THESE):
+      - /volume2/video.xxx.clips/Clips:/data/Clips
+      # - /volume2/video.xxx.clips/Videos:/data/Videos
+      # - /volume2/video.xxx.clips/Other:/data/Other
+      # - /volume1/media/Movies:/data/Movies
+      # - /volume1/media/TV:/data/TV
+      
+      # Add more library mappings as needed following the same pattern
+
+    # Optional: Set user/group IDs for file permissions
+    # Uncomment and adjust if you have permission issues
+    # user: "1000:1000"
+
+# ============================================================
+# NOTES FOR SYNOLOGY USERS:
+# ============================================================
+# 1. Create directory structure first:
+#    mkdir -p /volume2/video.xxx.clips/stash/{config,database,generated,metadata,cache}
+#
+# 2. Copy your Windows config files to:
+#    /volume2/video.xxx.clips/stash/config/
+#
+# 3. Copy your migrated database to:
+#    /volume2/video.xxx.clips/stash/database/stash-go.sqlite
+#
+# 4. If blobs directory doesn't exist, create it:
+#    mkdir -p /volume2/video.xxx.clips/stash/blobs
+#
+# 5. Ensure correct permissions:
+#    chmod -R 777 /volume2/video.xxx.clips/stash/
+#    (or set appropriate user/group ownership)
+#
+# 6. Start the container:
+#    docker compose up -d
+#
+# 7. Check logs:
+#    docker compose logs -f
+#
+# 8. Access Stash at: http://YOUR-SYNOLOGY-IP:9999
+#
+# ============================================================
+# PLUGIN MANAGEMENT:
+# ============================================================
+# Plugins should be placed in:
+# /volume2/video.xxx.clips/stash/config/plugins/
+#
+# Structure:
+# plugins/
+# ├── plugin1/
+# │   ├── plugin1.yml
+# │   └── plugin1.py
+# ├── plugin2/
+# │   ├── plugin2.yml
+# │   └── plugin2.py
+# └── ...
+#
+# You can edit plugins externally via:
+# - SMB/CIFS share
+# - File Station
+# - SSH/terminal
+#
+# After editing plugins, restart Stash:
+# docker compose restart
+
+
+

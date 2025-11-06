@@ -463,3 +463,16 @@ else
 	@mkdir -p $(PREFIX)/bin
 	@install -m 755 $(STASH_BINARY) $(PREFIX)/bin/stash
 endif
+
+# copies built stash.exe to local installation directory
+.PHONY: install-local
+install-local:
+ifdef IS_WIN_SHELL
+	@if not exist "C:\Users\areks\.stash\bin" mkdir "C:\Users\areks\.stash\bin"
+	copy /Y stash.exe "C:\Users\areks\.stash\bin\stash.exe"
+	@echo Stash installed to C:\Users\areks\.stash\bin\stash.exe
+else
+	@mkdir -p ~/.stash/bin
+	cp -f stash.exe ~/.stash/bin/stash.exe
+	@echo Stash installed to ~/.stash/bin/stash.exe
+endif

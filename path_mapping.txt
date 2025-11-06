@@ -1,0 +1,75 @@
+# Stash Path Mapping Configuration
+# ==================================
+#
+# This file defines the mapping between Windows paths and Synology paths
+# for database migration.
+#
+# Format: WINDOWS_PATH|SYNOLOGY_PATH
+#
+# Rules:
+# - One mapping per line
+# - Use pipe (|) as separator
+# - Windows paths can use either \ or / as separators
+# - Lines starting with # are comments
+# - Empty lines are ignored
+# - Paths are case-insensitive for matching
+#
+# IMPORTANT NOTES:
+# ================
+# 1. List longer/more specific paths BEFORE shorter/general ones
+#    Example: Put "L:\Videos\Movies" before "L:\Videos"
+#
+# 2. The Synology paths on the right side should match the paths
+#    used in your docker-compose.yml volume mappings
+#
+# 3. After migration, the database will contain the Synology paths,
+#    which will be mapped to container paths via Docker volumes
+#
+# Example Docker mapping in docker-compose.yml:
+#   /volume2/video.xxx.clips/Clips:/data/Clips
+#
+# This means:
+# - Windows path: L:\Clips
+# - Synology path (in this file): /data/Clips
+# - Actual Synology location: /volume2/video.xxx.clips/Clips
+#
+# ==================================
+# YOUR PATH MAPPINGS
+# ==================================
+# Edit the mappings below to match your setup
+
+# Example mapping for Clips library
+# Windows: L:\Clips -> Container: /data/Clips
+L:\Clips|/data/Clips
+u:Clips2|/data/Clips2
+u:\Clips21|/data/Clips21
+u:\PornHubs|/data/PornHubs
+u:\clips.worse|/data/clips.worse
+w:\Clips30|/data/Clips30
+w:\Clips31|/data/Clips31
+
+# Add your other library mappings here:
+# Format: WINDOWS_PATH|CONTAINER_PATH
+
+# Example mappings (uncomment and modify as needed):
+# M:\Videos|/data/Videos
+# N:\Movies|/data/Movies
+# O:\TV Shows|/data/TV
+# P:\Photos|/data/Photos
+
+# More examples with subdirectories:
+# L:\Media\Adult|/data/Adult
+# L:\Media\Mainstream|/data/Mainstream
+# M:\Archive\Old|/data/Archive
+
+# ==================================
+# TIPS:
+# ==================================
+# - To find your current Windows paths, check your Stash settings
+#   or look at the "folders" table in your database
+# - Use forward slashes (/) for Synology paths
+# - Don't include trailing slashes
+# - Test with verify_migration.py after migration
+
+
+

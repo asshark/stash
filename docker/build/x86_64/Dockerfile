@@ -15,6 +15,8 @@ RUN make pre-ui
 RUN make generate-ui
 ARG GITHASH
 ARG STASH_VERSION
+# Increase Node.js memory limit to 4GB for building UI
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN BUILD_DATE=$(date +"%Y-%m-%d %H:%M:%S") make ui-only
 
 # Build Backend
@@ -37,7 +39,10 @@ RUN make flags-release flags-pie stash
 
 # Final Runnable Image
 FROM alpine:latest
-RUN apk add --no-cache ca-certificates vips-tools ffmpeg
+# Install runtime dependencies including Python for plugins
+RUN apk add --no-cache ca-certificates vips-tools ffmpeg python3 py3-pip py3-requests py3-lxml
+# Create symlink for 'python' command
+RUN ln -sf /usr/bin/python3 /usr/bin/python
 COPY --from=backend /stash/stash /usr/bin/
 ENV STASH_CONFIG_FILE=/root/.stash/config.yml
 EXPOSE 9999
