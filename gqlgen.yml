@@ -18,6 +18,7 @@ autobind:
   - github.com/stashapp/stash/internal/identify
   - github.com/stashapp/stash/internal/dlna
   - github.com/stashapp/stash/pkg/stashbox
+  - github.com/stashapp/stash/pkg/downloadchecker
 
 models:
   # Scalars
@@ -135,6 +136,45 @@ models:
     model: github.com/stashapp/stash/pkg/scraper.Source
   SavedFindFilterType:
     model: github.com/stashapp/stash/pkg/models.FindFilterType
+  # Download checker types
+  DownloadDirectory:
+    model: github.com/stashapp/stash/pkg/downloadchecker.DownloadDirectory
+    fields:
+      active_scan_job_id:
+        fieldName: ActiveScanJobID
+  DownloadScan:
+    model: github.com/stashapp/stash/pkg/downloadchecker.DownloadScanSummary
+  DownloadScanResult:
+    model: github.com/stashapp/stash/pkg/downloadchecker.DownloadScanResult
+    fields:
+      scan_id:
+        fieldName: ScanID
+      directory_id:
+        fieldName: DirectoryID
+      directory_path:
+        fieldName: DirectoryPath
+      scan_started_at:
+        fieldName: ScanStartedAt
+      scan_completed_at:
+        fieldName: ScanCompletedAt
+      total_scanned:
+        fieldName: TotalScanned
+      duplicates_found:
+        fieldName: DuplicatesFound
+  DownloadDuplicateFile:
+    model: github.com/stashapp/stash/pkg/downloadchecker.DownloadDuplicateFile
+    fields:
+      file_size:
+        fieldName: FileSize
+      matching_scenes:
+        fieldName: MatchingScenes
+  DownloadMatchingScene:
+    model: github.com/stashapp/stash/pkg/downloadchecker.DownloadMatchingScene
+    fields:
+      file_size:
+        fieldName: FileSize
+      duration:
+        resolver: true
   # force resolvers
   ConfigResult:
     fields:

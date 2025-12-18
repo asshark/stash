@@ -1,0 +1,53 @@
+type DownloadDirectory {
+  id: ID!
+  path: String!
+  name: String!
+  created_at: Time!
+  last_scan_id: ID
+  active_scan_job_id: ID
+}
+
+type DownloadScan {
+  scan_id: ID!
+  directory_id: ID!
+  directory_path: String!
+  scan_started_at: Time!
+  scan_completed_at: Time
+  total_scanned: Int!
+  duplicates_found: Int!
+  status: String!
+}
+
+type DownloadMatchingScene {
+  id: ID!
+  title: String!
+  path: String!
+  file_size: Int!
+  width: Int!
+  height: Int!
+  duration: Float
+  phash: String
+}
+
+type DownloadDuplicateFile {
+  path: String!
+  phash: String!
+  file_size: Int!
+  width: Int!
+  height: Int!
+  duration: Float!
+  matching_scenes: [DownloadMatchingScene!]!
+}
+
+type DownloadScanResult {
+  scan_id: ID!
+  directory_id: ID!
+  directory_path: String!
+  scan_started_at: Time!
+  scan_completed_at: Time
+  total_scanned: Int!
+  duplicates_found: Int!
+  files: [DownloadDuplicateFile!]!
+  status: String!
+}
+

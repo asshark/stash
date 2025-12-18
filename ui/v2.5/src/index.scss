@@ -1210,6 +1210,42 @@ div.dropdown-menu {
     text-align: center;
     text-transform: uppercase;
   }
+
+  &.report-basic-stats {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-items: stretch;
+
+    .report-stat-item {
+      flex: 1 1 0;
+      min-width: 0;
+      padding: 0 0.5rem;
+    }
+
+    .title {
+      font-size: 1.8vw;
+
+      @media (max-width: 576px) {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      flex-wrap: wrap;
+      
+      .report-stat-item {
+        flex: 1 1 calc(50% - 1rem);
+        margin-bottom: 1rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .report-stat-item {
+        flex: 1 1 100%;
+      }
+    }
+  }
 }
 
 $detailTabWidth: calc(100% / 3);
@@ -1499,5 +1535,48 @@ h3 .TruncatedText {
 
   .btn {
     pointer-events: auto;
+  }
+}
+
+// Directory Duplicate Checker Report styles
+.directory-duplicate-checker-report {
+  .file-group-card {
+    margin-bottom: 1rem;
+    
+    .card-header {
+      cursor: pointer;
+      background-color: var(--bs-gray-100);
+      
+      &:hover {
+        background-color: var(--bs-gray-200);
+      }
+    }
+  }
+  
+  .file-card {
+    border: 1px solid var(--bs-border-color);
+    
+    .card-body {
+      padding: 1rem;
+    }
+  }
+  
+  .file-group-files {
+    .file-card {
+      &:last-child {
+        margin-bottom: 0 !important;
+      }
+    }
+  }
+  
+  // Responsive layout for file cards
+  @media (max-width: 768px) {
+    .file-card {
+      .row > [class*="col-"] {
+        margin-bottom: 0.5rem;
+      }
+    }
+  }
+}
   }
 }

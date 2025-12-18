@@ -14,7 +14,8 @@
     "anonymise": "Anonymise",
     "apply": "Apply",
     "assign_stashid_to_parent_studio": "Assign Stash ID to existing parent studio and update metadata",
-    "auto_tag": "Auto tag",
+    "auto_tag": "Auto Tag",
+    "back": "Back",
     "backup": "Backup",
     "browse_for_image": "Browse for image…",
     "cancel": "Cancel",
@@ -665,7 +666,8 @@
     "tools": {
       "graphql_playground": "GraphQL playground",
       "heading": "Tools",
-      "scene_duplicate_checker": "Scene duplicate checker",
+      "scene_duplicate_checker": "Scene Duplicate Checker",
+      "directory_duplicate_checker": "Directory Duplicate Checker",
       "scene_filename_parser": {
         "add_field": "Add Field",
         "capitalize_title": "Capitalize title",
@@ -1784,5 +1786,36 @@
   "weight": "Weight",
   "weight_kg": "Weight (kg)",
   "years_old": "years old",
-  "zip_file_count": "Zip File Count"
+  "zip_file_count": "Zip File Count",
+  "directory_duplicate_checker": {
+    "title": "Directory Duplicate Checker",
+    "directory": "Directory",
+    "no_directories": "No download directories configured. Add a directory to start checking for duplicates.",
+    "last_scan": "Last Scan",
+    "check_duplicates": "Check if I already have it",
+    "view_report": "View Report",
+    "scanning": "Scanning",
+    "scan_completed": "Scan completed",
+    "scan_failed": "Scan failed",
+    "scan_report": "Scan Report",
+    "duplicates_found": "{count, plural, one {# duplicate found} other {# duplicates found}}",
+    "file_path": "File Path",
+    "resolution": "Resolution",
+    "matching_scene": "Matching Scene",
+    "view_scene": "View Scene",
+    "stats": {
+      "total_scanned": "Total files scanned",
+      "duplicates_found": "Duplicates found"
+    },
+    "matching_scenes": "Matching scenes",
+    "no_duplicates": "No duplicates found in the selected directory.",
+    "play_file": "Play file",
+    "delete_all_except_one": "Delete all except one",
+    "exact_duplicate": "Exact duplicate",
+    "better_quality": "Download file has better quality than library scene",
+    "worse_quality": "Download file has worse quality than library scene",
+    "same_quality": "Download file has same quality as library scene",
+    "files_in_group": "{count, plural, one {# file in group} other {# files in group}}",
+    "delete_group_confirm": "Delete {count} files from this group?"
+  }
 }

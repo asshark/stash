@@ -2,6 +2,7 @@ import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
 import { Button, Form, Row, Col, Dropdown } from "react-bootstrap";
 import { FormattedMessage } from "react-intl";
+import { useLocation } from "react-router-dom";
 import { Icon } from "src/components/Shared/Icon";
 import * as GQL from "src/core/generated-graphql";
 import TextUtils from "src/utils/text";
@@ -99,8 +100,15 @@ const StashConfiguration: React.FC<IStashConfigurationProps> = ({
   stashes,
   setStashes,
 }) => {
+  const location = useLocation();
   const [isCreating, setIsCreating] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | undefined>();
+
+  console.log("=== StashConfiguration render ===", {
+    location: location.pathname,
+    isCreating,
+    editingIndex,
+  });
 
   function onEdit(index: number) {
     setEditingIndex(index);
@@ -117,10 +125,14 @@ const StashConfiguration: React.FC<IStashConfigurationProps> = ({
   const handleSave = (index: number, stash: GQL.StashConfig) =>
     setStashes(stashes.map((s, i) => (i === index ? stash : s)));
 
+  // Only render dialogs if we're on settings page
+  const isSettingsPage = location.pathname === "/settings";
+
   return (
     <>
-      {isCreating ? (
+      {isCreating && isSettingsPage ? (
         <FolderSelectDialog
+          show={true}
           onClose={(v) => {
             if (v)
               setStashes([
@@ -138,8 +150,9 @@ const StashConfiguration: React.FC<IStashConfigurationProps> = ({
         />
       ) : undefined}
 
-      {editingIndex !== undefined ? (
+      {editingIndex !== undefined && isSettingsPage ? (
         <FolderSelectDialog
+          show={true}
           defaultValue={stashes[editingIndex].path}
           onClose={(v) => {
             if (v)

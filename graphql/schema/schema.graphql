@@ -54,6 +54,21 @@ type Query {
     scene_filter: SceneFilterType
   ): [[Scene!]!]!
 
+  """
+  Scans a directory for video files, calculates phash for each, and checks for duplicates in the database.
+  Returns a list of duplicate files with matching scenes.
+  """
+  checkDirectoryDuplicates(directory: String!): DirectoryDuplicateCheckResult!
+
+  "Returns list of configured download directories"
+  downloadDirectories: [DownloadDirectory!]!
+
+  "Returns list of scans for a download directory"
+  downloadDirectoryScans(directoryId: ID!): [DownloadScan!]!
+
+  "Returns detailed result of a download directory scan"
+  downloadScanResult(scanId: ID!): DownloadScanResult
+
   "Return valid stream paths"
   sceneStreams(id: ID): [SceneStreamEndpoint!]!
 
@@ -489,6 +504,27 @@ type Mutation {
   metadataIdentify(input: IdentifyMetadataInput!): ID!
   "Copy clips based on filter criteria. Returns the job ID"
   clipCopy(input: ClipCopyInput!): ID!
+
+  "Delete duplicate files from the filesystem. Files must be within the specified directory for safety."
+  deleteDuplicateFiles(paths: [String!]!): Boolean!
+
+  """
+  Replace a library scene's primary file with a duplicate from the downloads directory,
+  preserving the scene entry but updating the underlying video file.
+  """
+  replaceDuplicateWithScene(scene_id: ID!, duplicate_path: String!): ID!
+
+  "Adds a download directory to the list"
+  addDownloadDirectory(path: String!, name: String!): DownloadDirectory!
+
+  "Removes a download directory from the list"
+  removeDownloadDirectory(directoryId: ID!): Boolean!
+
+  "Starts a background scan of a download directory. Returns job ID."
+  startDownloadDirectoryScan(directoryId: ID!): ID!
+
+  "Clears all scan results for a download directory. Next scan will start from scratch."
+  clearDownloadDirectoryScans(directoryId: ID!): Boolean!
 
   "Migrate generated files for the current hash naming"
   migrateHashNaming: ID!

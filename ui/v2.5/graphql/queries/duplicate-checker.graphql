@@ -1,0 +1,34 @@
+query CheckDirectoryDuplicates($directory: String!) {
+  checkDirectoryDuplicates(directory: $directory) {
+    total_scanned
+    duplicates_found
+    files {
+      path
+      phash
+      file_size
+      matching_scenes {
+        id
+        title
+        code
+        files {
+          path
+          size
+        }
+        paths {
+          screenshot
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+

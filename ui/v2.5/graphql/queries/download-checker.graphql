@@ -1,0 +1,55 @@
+query DownloadDirectories {
+  downloadDirectories {
+    id
+    path
+    name
+    created_at
+    last_scan_id
+    active_scan_job_id
+  }
+}
+
+query DownloadDirectoryScans($directoryId: ID!) {
+  downloadDirectoryScans(directoryId: $directoryId) {
+    scan_id
+    directory_id
+    directory_path
+    scan_started_at
+    scan_completed_at
+    total_scanned
+    duplicates_found
+    status
+  }
+}
+
+query DownloadScanResult($scanId: ID!) {
+  downloadScanResult(scanId: $scanId) {
+    scan_id
+    directory_id
+    directory_path
+    scan_started_at
+    scan_completed_at
+    total_scanned
+    duplicates_found
+    status
+    files {
+      path
+      phash
+      file_size
+      width
+      height
+      duration
+      matching_scenes {
+        id
+        title
+        path
+        file_size
+        width
+        height
+        duration
+        phash
+      }
+    }
+  }
+}
+

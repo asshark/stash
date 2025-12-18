@@ -9,11 +9,12 @@
         "anonymise": "Zanonimizuj",
         "apply": "Zastosuj",
         "auto_tag": "Automatyczne tagowanie",
+        "back": "Wstecz",
         "backup": "Kopia zapasowa",
         "browse_for_image": "Przeglądaj w poszukiwaniu obrazu…",
         "cancel": "Anuluj",
         "clean": "Wyczyść",
-        "clear": "Usuń",
+        "clear": "Czyść",
         "clear_back_image": "Usuń tylną okładkę",
         "clear_front_image": "Usuń przednią okładkę",
         "clear_image": "Usuń obraz",
@@ -621,6 +622,7 @@
         },
         "tools": {
             "scene_duplicate_checker": "Sprawdzacz duplikatów scen",
+            "directory_duplicate_checker": "Duplikacje w Pobranych",
             "scene_filename_parser": {
                 "add_field": "Dodaj pole",
                 "capitalize_title": "Zapisuj tytuł wielkimi literami",
@@ -1585,6 +1587,30 @@
     "include_sub_studio_content": "Uwzględnij zawartość podstudia",
     "include_sub_tag_content": "Uwzględnij zawartość podtaga",
     "odate_recorded_no_sfw": "Nie zarejestrowano polubień",
+    "directory_duplicate_checker": {
+        "title": "Sprawdzanie duplikatów katalogów",
+        "directory": "Katalog",
+        "no_directories": "Nie skonfigurowano katalogów pobierania. Dodaj katalog, aby rozpocząć sprawdzanie duplikatów.",
+        "last_scan": "Ostatnie skanowanie",
+        "check_duplicates": "Sprawdź czy już mam",
+        "view_report": "Zobacz raport",
+        "scanning": "Skanowanie",
+        "scan_completed": "Skanowanie zakończone",
+        "scan_failed": "Skanowanie nie powiodło się",
+        "scan_report": "Raport skanowania",
+        "duplicates_found": "{count, plural, one {Znaleziono # duplikat} few {Znaleziono # duplikaty} other {Znaleziono # duplikatów}}",
+        "file_path": "Ścieżka pliku",
+        "resolution": "Rozdzielczość",
+        "matching_scene": "Pasująca scena",
+        "view_scene": "Zobacz scenę",
+        "stats": {
+            "total_scanned": "Łącznie przeskanowanych plików",
+            "duplicates_found": "Znalezionych duplikatów"
+        },
+        "matching_scenes": "Pasujące sceny",
+        "no_duplicates": "Nie znaleziono duplikatów w wybranym katalogu.",
+        "scan_results": "raporty skanowania"
+    },
     "career_end": "Koniec kariery",
     "career_start": "Początek kariery"
 }

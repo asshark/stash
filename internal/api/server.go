@@ -221,6 +221,7 @@ func Initialize() (*Server, error) {
 	r.Mount("/tag", server.getTagRoutes())
 	r.Mount("/downloads", server.getDownloadsRoutes())
 	r.Mount("/plugin", server.getPluginRoutes())
+	r.Mount("/file", server.getFileRoutes())
 
 	r.HandleFunc("/css", cssHandler(cfg))
 	r.HandleFunc("/javascript", javascriptHandler(cfg))
@@ -262,6 +263,10 @@ func Initialize() (*Server, error) {
 
 	// Serve the web app
 	r.HandleFunc("/*", func(w http.ResponseWriter, r *http.Request) {
+		// Log requests that might be hitting catch-all instead of specific routes
+		if strings.HasPrefix(r.URL.Path, "/file/") {
+			logger.Warnf("Catch-all handler intercepted /file/ request: %s", r.URL.Path)
+		}
 		ext := path.Ext(r.URL.Path)
 
 		if ext == ".html" || ext == "" {
@@ -418,6 +423,13 @@ func (s *Server) getDownloadsRoutes() chi.Router {
 func (s *Server) getPluginRoutes() chi.Router {
 	return pluginRoutes{
 		pluginCache: s.manager.PluginCache,
+	}.Routes()
+}
+
+func (s *Server) getFileRoutes() chi.Router {
+	repo := s.manager.Repository
+	return fileRoutes{
+		routes: routes{txnManager: repo.TxnManager},
 	}.Routes()
 }
 

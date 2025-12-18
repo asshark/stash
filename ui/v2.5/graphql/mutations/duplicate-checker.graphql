@@ -1,0 +1,14 @@
+mutation DeleteDuplicateFiles($paths: [String!]!) {
+  deleteDuplicateFiles(paths: $paths)
+}
+
+
+
+
+
+
+
+
+
+
+

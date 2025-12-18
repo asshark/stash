@@ -1,0 +1,26 @@
+mutation AddDownloadDirectory($path: String!, $name: String!) {
+  addDownloadDirectory(path: $path, name: $name) {
+    id
+    path
+    name
+    created_at
+    last_scan_id
+  }
+}
+
+mutation RemoveDownloadDirectory($directoryId: ID!) {
+  removeDownloadDirectory(directoryId: $directoryId)
+}
+
+mutation StartDownloadDirectoryScan($directoryId: ID!) {
+  startDownloadDirectoryScan(directoryId: $directoryId)
+}
+
+mutation DeleteDuplicateFiles($paths: [String!]!) {
+  deleteDuplicateFiles(paths: $paths)
+}
+
+mutation ClearDownloadDirectoryScans($directoryId: ID!) {
+  clearDownloadDirectoryScans(directoryId: $directoryId)
+}
+

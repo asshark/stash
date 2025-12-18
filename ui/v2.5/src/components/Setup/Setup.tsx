@@ -360,7 +360,7 @@ const DirectorySelector: React.FC<{
   return (
     <>
       {showSelectDialog ? (
-        <FolderSelectDialog onClose={onSelectClosed} />
+        <FolderSelectDialog show={true} onClose={onSelectClosed} />
       ) : null}
       <InputGroup>
         <Form.Control

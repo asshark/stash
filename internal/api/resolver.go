@@ -112,6 +112,10 @@ func (r *Resolver) ConfigResult() ConfigResultResolver {
 	return &configResultResolver{r}
 }
 
+func (r *Resolver) DownloadMatchingScene() DownloadMatchingSceneResolver {
+	return &downloadMatchingSceneResolver{r}
+}
+
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }
@@ -137,6 +141,7 @@ type folderResolver struct{ *Resolver }
 type savedFilterResolver struct{ *Resolver }
 type pluginResolver struct{ *Resolver }
 type configResultResolver struct{ *Resolver }
+type downloadMatchingSceneResolver struct{ *Resolver }
 
 func (r *Resolver) withTxn(ctx context.Context, fn func(ctx context.Context) error) error {
 	return r.repository.WithTxn(ctx, fn)

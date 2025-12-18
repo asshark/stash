@@ -1,0 +1,30 @@
+type DuplicateFile {
+  "Path to the file"
+  path: String!
+  "Calculated phash value"
+  phash: String!
+  "Scenes in database with the same phash"
+  matching_scenes: [Scene!]!
+  "File size in bytes"
+  file_size: Int!
+}
+
+type DirectoryDuplicateCheckResult {
+  "List of duplicate files found"
+  files: [DuplicateFile!]!
+  "Total number of files scanned"
+  total_scanned: Int!
+  "Number of duplicates found"
+  duplicates_found: Int!
+}
+
+
+
+
+
+
+
+
+
+
+

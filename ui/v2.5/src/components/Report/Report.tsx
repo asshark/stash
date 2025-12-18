@@ -328,8 +328,8 @@ const Report: React.FC = () => {
         <div className="row mb-4">
           <div className="col-12">
             <h2>Podstawowe statystyki</h2>
-            <div className="row stats">
-              <div className="col-md-2 col-sm-4 col-6 mb-3">
+             <div className="stats report-basic-stats">
+              <div className="report-stat-item">
                 <div className="stats-element">
                   <p className="title">
                     <FormattedNumber value={statsData.stats.scene_count} />
@@ -337,7 +337,7 @@ const Report: React.FC = () => {
                   <p className="heading">Ilość scen</p>
                 </div>
               </div>
-              <div className="col-md-2 col-sm-4 col-6 mb-3">
+              <div className="report-stat-item">
                 <div className="stats-element">
                   <p className="title">
                     {organizedScenesLoading ? (
@@ -356,7 +356,7 @@ const Report: React.FC = () => {
                   <p className="heading">Uporządkowane sceny</p>
                 </div>
               </div>
-              <div className="col-md-2 col-sm-4 col-6 mb-3">
+              <div className="report-stat-item">
                 <div className="stats-element">
                   <p className="title">
                     <FormattedNumber value={statsData.stats.scenes_played} />
@@ -364,7 +364,7 @@ const Report: React.FC = () => {
                   <p className="heading">Obejrzane sceny</p>
                 </div>
               </div>
-              <div className="col-md-2 col-sm-4 col-6 mb-3">
+              <div className="report-stat-item">
                 <div className="stats-element">
                   <p className="title">
                     <FormattedNumber value={statsData.stats.total_play_count} />
@@ -372,7 +372,7 @@ const Report: React.FC = () => {
                   <p className="heading">Łączna liczba odtworzeń</p>
                 </div>
               </div>
-              <div className="col-md-2 col-sm-4 col-6 mb-3">
+              <div className="report-stat-item">
                 <div className="stats-element">
                   <p className="title">
                     <FormattedNumber value={statsData.stats.performer_count} />
@@ -380,7 +380,7 @@ const Report: React.FC = () => {
                   <p className="heading">Ilość aktorów</p>
                 </div>
               </div>
-              <div className="col-md-2 col-sm-4 col-6 mb-3">
+              <div className="report-stat-item">
                 <div className="stats-element">
                   <p className="title">
                     <FormattedNumber value={statsData.stats.studio_count} />
@@ -388,7 +388,7 @@ const Report: React.FC = () => {
                   <p className="heading">Ilość studiów</p>
                 </div>
               </div>
-              <div className="col-md-2 col-sm-4 col-6 mb-3">
+              <div className="report-stat-item">
                 <div className="stats-element">
                   <p className="title">
                     {readyToCopyLoading ? (

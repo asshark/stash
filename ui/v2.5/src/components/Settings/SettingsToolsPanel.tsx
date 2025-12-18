@@ -9,6 +9,7 @@ import { ExternalLink } from "../Shared/ExternalLink";
 
 const SettingsToolsSection = PatchContainerComponent("SettingsToolsSection");
 
+
 export const SettingsToolsPanel: React.FC = () => {
   return (
     <>
@@ -42,6 +43,16 @@ export const SettingsToolsPanel: React.FC = () => {
               <Link to="/sceneDuplicateChecker">
                 <Button>
                   <FormattedMessage id="config.tools.scene_duplicate_checker" />
+                </Button>
+              </Link>
+            }
+          />
+
+          <Setting
+            heading={
+              <Link to="/directoryDuplicateChecker">
+                <Button>
+                  <FormattedMessage id="config.tools.directory_duplicate_checker" />
                 </Button>
               </Link>
             }
