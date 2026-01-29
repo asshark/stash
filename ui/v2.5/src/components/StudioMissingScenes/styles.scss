@@ -1,0 +1,54 @@
+.StudioMissingScenes-table tbody tr:hover .StudioMissingScenes-title,
+.StudioMissingScenes-table tbody tr:hover .StudioMissingScenes-date {
+  color: $text-color;
+  font-weight: 600;
+}
+
+.StudioMissingScenes-title,
+.StudioMissingScenes-date {
+  color: $text-muted;
+}
+
+.StudioMissingScenes-stash-id a {
+  word-break: break-all;
+}
+
+.StudioMissingScenes-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.StudioMissingScenes-table th:nth-child(1),
+.StudioMissingScenes-table td:nth-child(1) {
+  width: 18%;
+}
+
+.StudioMissingScenes-table th:nth-child(2),
+.StudioMissingScenes-table td:nth-child(2) {
+  width: 22%;
+}
+
+.StudioMissingScenes-table th:nth-child(3),
+.StudioMissingScenes-table td:nth-child(3) {
+  width: 22%;
+}
+
+.StudioMissingScenes-table th:nth-child(4),
+.StudioMissingScenes-table td:nth-child(4) {
+  width: 10%;
+}
+
+.StudioMissingScenes-table th:nth-child(5),
+.StudioMissingScenes-table td:nth-child(5) {
+  width: 28%;
+}
+
+.StudioMissingScenes-performers,
+.StudioMissingScenes-title,
+.StudioMissingScenes-date,
+.StudioMissingScenes-stash-id,
+.StudioMissingScenes-table td:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

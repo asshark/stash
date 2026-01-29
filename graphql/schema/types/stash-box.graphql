@@ -36,3 +36,47 @@ input StashBoxDraftSubmissionInput {
   stash_box_index: Int @deprecated(reason: "use stash_box_endpoint")
   stash_box_endpoint: String
 }
+
+input StashBoxStudioScenesInput {
+  "Index of the configured stash-box instance to use"
+  stash_box_index: Int @deprecated(reason: "use stash_box_endpoint")
+  "Endpoint of the stash-box instance to use"
+  stash_box_endpoint: String
+  "Stash-box studio ID"
+  studio_id: ID!
+}
+
+type StashBoxStudioScene {
+  id: ID!
+  title: String
+  date: String
+  urls: [String!]!
+  performers: [String!]!
+}
+
+type StashBoxStudioScenesResult {
+  count: Int!
+  scenes: [StashBoxStudioScene!]!
+}
+
+input StashBoxPerformerScenesInput {
+  "Index of the configured stash-box instance to use"
+  stash_box_index: Int @deprecated(reason: "use stash_box_endpoint")
+  "Endpoint of the stash-box instance to use"
+  stash_box_endpoint: String
+  "Stash-box performer ID"
+  performer_id: ID!
+}
+
+type StashBoxPerformerScene {
+  id: ID!
+  title: String
+  date: String
+  urls: [String!]!
+  performers: [String!]!
+}
+
+type StashBoxPerformerScenesResult {
+  count: Int!
+  scenes: [StashBoxPerformerScene!]!
+}

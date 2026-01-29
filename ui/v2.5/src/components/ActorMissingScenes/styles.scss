@@ -1,0 +1,54 @@
+.ActorMissingScenes-table tbody tr:hover .ActorMissingScenes-title,
+.ActorMissingScenes-table tbody tr:hover .ActorMissingScenes-date {
+  color: $text-color;
+  font-weight: 600;
+}
+
+.ActorMissingScenes-title,
+.ActorMissingScenes-date {
+  color: $text-muted;
+}
+
+.ActorMissingScenes-stash-id a {
+  word-break: break-all;
+}
+
+.ActorMissingScenes-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.ActorMissingScenes-table th:nth-child(1),
+.ActorMissingScenes-table td:nth-child(1) {
+  width: 18%;
+}
+
+.ActorMissingScenes-table th:nth-child(2),
+.ActorMissingScenes-table td:nth-child(2) {
+  width: 22%;
+}
+
+.ActorMissingScenes-table th:nth-child(3),
+.ActorMissingScenes-table td:nth-child(3) {
+  width: 22%;
+}
+
+.ActorMissingScenes-table th:nth-child(4),
+.ActorMissingScenes-table td:nth-child(4) {
+  width: 10%;
+}
+
+.ActorMissingScenes-table th:nth-child(5),
+.ActorMissingScenes-table td:nth-child(5) {
+  width: 28%;
+}
+
+.ActorMissingScenes-performers,
+.ActorMissingScenes-title,
+.ActorMissingScenes-date,
+.ActorMissingScenes-stash-id,
+.ActorMissingScenes-table td:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

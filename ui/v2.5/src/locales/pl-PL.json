@@ -620,10 +620,12 @@
             "generate_image_phashes_during_scan_tooltip": "Do deduplikacji i identyfikacji.",
             "optimise_database_warning": "**Ostrzeżenie:** podczas wykonywania tego zadania wszelkie operacje modyfikujące bazę danych nie powiodą się. W zależności od rozmiaru bazy danych proces może potrwać kilka minut. Wymagane jest co najmniej tyle wolnego miejsca na dysku, ile wynosi rozmiar bazy danych, jednak zalecane jest 1,5 razy więcej."
         },
-        "tools": {
-            "scene_duplicate_checker": "Sprawdzacz duplikatów scen",
-            "directory_duplicate_checker": "Duplikacje w Pobranych",
-            "scene_filename_parser": {
+          "tools": {
+              "scene_duplicate_checker": "Sprawdzacz duplikatów scen",
+              "directory_duplicate_checker": "Duplikacje w Pobranych",
+              "studio_missing_scenes": "Brakujące sceny studia",
+              "actor_missing_scenes": "Brakujące sceny aktora",
+              "scene_filename_parser": {
                 "add_field": "Dodaj pole",
                 "capitalize_title": "Zapisuj tytuł wielkimi literami",
                 "display_fields": "Wyświetl pola",
@@ -1610,6 +1612,33 @@
         "matching_scenes": "Pasujące sceny",
         "no_duplicates": "Nie znaleziono duplikatów w wybranym katalogu.",
         "scan_results": "raporty skanowania"
+    },
+    "studio_missing_scenes": {
+      "title": "Brakujące sceny studia",
+      "select_studio": "Studio",
+      "select_studio_placeholder": "Wybierz studio...",
+      "select_stash_id": "Stash ID",
+      "no_stash_ids": "Brak dostępnych Stash ID",
+      "generate_report": "Generuj raport",
+      "report_title": "Raport brakujących scen",
+      "report_total_local": "Sceny lokalne:",
+      "report_local_missing_stash_id": "Sceny lokalne bez Stash ID:",
+      "report_total_remote": "Sceny w StashBox:",
+      "report_missing": "Brakujące sceny:",
+      "report_empty": "Nie znaleziono brakujących scen."
+    },
+    "actor_missing_scenes": {
+      "title": "Brakujące sceny aktora",
+      "select_actor": "Aktor",
+      "select_actor_placeholder": "Wybierz aktora...",
+      "select_stash_id": "Stash ID",
+      "no_stash_ids": "Brak dostępnych Stash ID",
+      "generate_report": "Generuj raport",
+      "report_title": "Raport brakujących scen",
+      "report_total_local": "Sceny lokalne:",
+      "report_total_remote": "Sceny w StashBox:",
+      "report_missing": "Brakujące sceny:",
+      "report_empty": "Nie znaleziono brakujących scen."
     },
     "career_end": "Koniec kariery",
     "career_start": "Początek kariery"

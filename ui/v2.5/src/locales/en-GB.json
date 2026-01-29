@@ -665,10 +665,12 @@
     },
     "tools": {
       "graphql_playground": "GraphQL playground",
-      "heading": "Tools",
-      "scene_duplicate_checker": "Scene Duplicate Checker",
-      "directory_duplicate_checker": "Directory Duplicate Checker",
-      "scene_filename_parser": {
+        "heading": "Tools",
+        "scene_duplicate_checker": "Scene Duplicate Checker",
+        "directory_duplicate_checker": "Directory Duplicate Checker",
+        "studio_missing_scenes": "Studio Missing Scenes",
+        "actor_missing_scenes": "Actor Missing Scenes",
+        "scene_filename_parser": {
         "add_field": "Add Field",
         "capitalize_title": "Capitalize title",
         "display_fields": "Display fields",
@@ -1817,5 +1819,32 @@
     "same_quality": "Download file has same quality as library scene",
     "files_in_group": "{count, plural, one {# file in group} other {# files in group}}",
     "delete_group_confirm": "Delete {count} files from this group?"
+  },
+  "studio_missing_scenes": {
+    "title": "Studio Missing Scenes",
+    "select_studio": "Studio",
+    "select_studio_placeholder": "Select studio...",
+    "select_stash_id": "Stash ID",
+    "no_stash_ids": "No Stash IDs available",
+    "generate_report": "Generate Report",
+    "report_title": "Missing Scenes Report",
+    "report_total_local": "Local scenes:",
+    "report_local_missing_stash_id": "Local scenes without Stash ID:",
+    "report_total_remote": "StashBox scenes:",
+    "report_missing": "Missing scenes:",
+    "report_empty": "No missing scenes found."
+  },
+  "actor_missing_scenes": {
+    "title": "Actor Missing Scenes",
+    "select_actor": "Actor",
+    "select_actor_placeholder": "Select actor...",
+    "select_stash_id": "Stash ID",
+    "no_stash_ids": "No Stash IDs available",
+    "generate_report": "Generate Report",
+    "report_title": "Missing Scenes Report",
+    "report_total_local": "Local scenes:",
+    "report_total_remote": "StashBox scenes:",
+    "report_missing": "Missing scenes:",
+    "report_empty": "No missing scenes found."
   }
 }

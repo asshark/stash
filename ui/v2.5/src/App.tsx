@@ -90,6 +90,12 @@ const DirectoryDuplicateChecker = lazyComponent(
 const ScanReport = lazyComponent(
   () => import("./components/DirectoryDuplicateChecker/ScanReport")
 );
+const StudioMissingScenes = lazyComponent(
+  () => import("./components/StudioMissingScenes/StudioMissingScenes")
+);
+const ActorMissingScenes = lazyComponent(
+  () => import("./components/ActorMissingScenes/ActorMissingScenes")
+);
 
 const appleRendering = isPlatformUniquelyRenderedByApple();
 
@@ -286,6 +292,14 @@ export const App: React.FC = () => {
             <Route
               path="/directoryDuplicateChecker/scan/:scanId"
               component={ScanReport}
+            />
+            <Route
+              path="/studioMissingScenes"
+              component={StudioMissingScenes}
+            />
+            <Route
+              path="/actorMissingScenes"
+              component={ActorMissingScenes}
             />
             <Route path="/setup" component={Setup} />
             <Route path="/welcome" component={Welcome} />

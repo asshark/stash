@@ -57,6 +57,26 @@ export const SettingsToolsPanel: React.FC = () => {
               </Link>
             }
           />
+
+          <Setting
+            heading={
+              <Link to="/studioMissingScenes">
+                <Button>
+                  <FormattedMessage id="config.tools.studio_missing_scenes" />
+                </Button>
+              </Link>
+            }
+          />
+
+          <Setting
+            heading={
+              <Link to="/actorMissingScenes">
+                <Button>
+                  <FormattedMessage id="config.tools.actor_missing_scenes" />
+                </Button>
+              </Link>
+            }
+          />
         </SettingsToolsSection>
       </SettingSection>
     </>

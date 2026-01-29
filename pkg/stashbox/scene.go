@@ -44,6 +44,127 @@ func (c Client) QueryScene(ctx context.Context, queryStr string) ([]*models.Scra
 	return ret, nil
 }
 
+const stashBoxQueryScenesByStudioID = `query QueryScenes($input: SceneQueryInput!) {
+  queryScenes(input: $input) {
+    count
+    scenes {
+      id
+      title
+      date
+      urls {
+        url
+      }
+      performers {
+        performer {
+          id
+          name
+          gender
+        }
+        as
+      }
+    }
+  }
+}`
+
+type stashBoxQueryScenesByStudioResult struct {
+	QueryScenes struct {
+		Count  int              `json:"count"`
+		Scenes []*graphql.Scene `json:"scenes"`
+	} `json:"queryScenes"`
+}
+
+func (c Client) QueryScenesByStudioID(ctx context.Context, studioID string) ([]*graphql.Scene, error) {
+	const pageSize = 100
+	page := 1
+	total := 0
+	var scenes []*graphql.Scene
+
+	for {
+		input := graphql.SceneQueryInput{
+			Studios: &graphql.MultiIDCriterionInput{
+				Value:    []string{studioID},
+				Modifier: graphql.CriterionModifierIncludes,
+			},
+			Page:      page,
+			PerPage:   pageSize,
+			Direction: graphql.SortDirectionEnumAsc,
+			Sort:      graphql.SceneSortEnumDate,
+		}
+
+		var response stashBoxQueryScenesByStudioResult
+		vars := map[string]interface{}{
+			"input": input,
+		}
+
+		if err := c.client.Client.Post(ctx, "QueryScenes", stashBoxQueryScenesByStudioID, &response, vars); err != nil {
+			return nil, err
+		}
+
+		if total == 0 {
+			total = response.QueryScenes.Count
+		}
+
+		if len(response.QueryScenes.Scenes) == 0 {
+			break
+		}
+
+		scenes = append(scenes, response.QueryScenes.Scenes...)
+		if len(scenes) >= total {
+			break
+		}
+
+		page++
+	}
+
+	return scenes, nil
+}
+
+func (c Client) QueryScenesByPerformerID(ctx context.Context, performerID string) ([]*graphql.Scene, error) {
+	const pageSize = 100
+	page := 1
+	total := 0
+	var scenes []*graphql.Scene
+
+	for {
+		input := graphql.SceneQueryInput{
+			Performers: &graphql.MultiIDCriterionInput{
+				Value:    []string{performerID},
+				Modifier: graphql.CriterionModifierIncludes,
+			},
+			Page:      page,
+			PerPage:   pageSize,
+			Direction: graphql.SortDirectionEnumAsc,
+			Sort:      graphql.SceneSortEnumDate,
+		}
+
+		var response stashBoxQueryScenesByStudioResult
+		vars := map[string]interface{}{
+			"input": input,
+		}
+
+		if err := c.client.Client.Post(ctx, "QueryScenes", stashBoxQueryScenesByStudioID, &response, vars); err != nil {
+			return nil, err
+		}
+
+		if total == 0 {
+			total = response.QueryScenes.Count
+		}
+
+		if len(response.QueryScenes.Scenes) == 0 {
+			break
+		}
+
+		scenes = append(scenes, response.QueryScenes.Scenes...)
+		if len(scenes) >= total {
+			break
+		}
+
+		page++
+	}
+
+	return scenes, nil
+}
+
 // FindStashBoxScenesByFingerprints queries stash-box for a scene using the
 // scene's MD5/OSHASH checksum, or PHash.
 func (c Client) FindSceneByFingerprints(ctx context.Context, fps models.Fingerprints) ([]*models.ScrapedScene, error) {

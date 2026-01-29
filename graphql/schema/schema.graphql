@@ -262,6 +262,12 @@ type Query {
     locale: String = "en"
   ): Directory!
   validateStashBoxCredentials(input: StashBoxInput!): StashBoxValidationResult!
+  stashBoxStudioScenes(
+    input: StashBoxStudioScenesInput!
+  ): StashBoxStudioScenesResult!
+  stashBoxPerformerScenes(
+    input: StashBoxPerformerScenesInput!
+  ): StashBoxPerformerScenesResult!
 
   # System status
   systemStatus: SystemStatus!
