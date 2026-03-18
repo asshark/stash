@@ -147,12 +147,12 @@ const Report: React.FC = () => {
   const mostPlayedScenesFilter = new ListFilterModel(GQL.FilterMode.Scenes);
   mostPlayedScenesFilter.sortBy = "play_count";
   mostPlayedScenesFilter.sortDirection = GQL.SortDirectionEnum.Desc;
-  mostPlayedScenesFilter.itemsPerPage = 5;
+  mostPlayedScenesFilter.itemsPerPage = 10;
 
   const mostPlayedPerformersFilter = new ListFilterModel(GQL.FilterMode.Performers);
   mostPlayedPerformersFilter.sortBy = "play_count";
   mostPlayedPerformersFilter.sortDirection = GQL.SortDirectionEnum.Desc;
-  mostPlayedPerformersFilter.itemsPerPage = 5;
+  mostPlayedPerformersFilter.itemsPerPage = 10;
   // Add female gender filter
   const femaleGenderCriterion3 = new GenderCriterion();
   femaleGenderCriterion3.value = ["Female"];
@@ -162,7 +162,7 @@ const Report: React.FC = () => {
   const performersWithMostScenesFilter = new ListFilterModel(GQL.FilterMode.Performers);
   performersWithMostScenesFilter.sortBy = "scenes_count";
   performersWithMostScenesFilter.sortDirection = GQL.SortDirectionEnum.Desc;
-  performersWithMostScenesFilter.itemsPerPage = 5;
+  performersWithMostScenesFilter.itemsPerPage = 10;
   // Add female gender filter
   const femaleGenderCriterion = new GenderCriterion();
   femaleGenderCriterion.value = ["Female"];
@@ -171,12 +171,12 @@ const Report: React.FC = () => {
   const scenesWithMostOCountFilter = new ListFilterModel(GQL.FilterMode.Scenes);
   scenesWithMostOCountFilter.sortBy = "o_counter";
   scenesWithMostOCountFilter.sortDirection = GQL.SortDirectionEnum.Desc;
-  scenesWithMostOCountFilter.itemsPerPage = 5;
+  scenesWithMostOCountFilter.itemsPerPage = 10;
 
   const performersWithMostOCountFilter = new ListFilterModel(GQL.FilterMode.Performers);
   performersWithMostOCountFilter.sortBy = "o_counter";
   performersWithMostOCountFilter.sortDirection = GQL.SortDirectionEnum.Desc;
-  performersWithMostOCountFilter.itemsPerPage = 5;
+  performersWithMostOCountFilter.itemsPerPage = 10;
   // Add female gender filter
   const femaleGenderCriterion2 = new GenderCriterion();
   femaleGenderCriterion2.value = ["Female"];
@@ -306,10 +306,10 @@ const Report: React.FC = () => {
       };
     });
 
-    // Sort by average rating descending and take top 5
+    // Sort by average rating descending and take top 10
     return performersWithAverages
       .sort((a, b) => b.averageRating - a.averageRating)
-      .slice(0, 5);
+      .slice(0, 10);
   }, [ratedScenesForPerformersData]);
 
   if (statsError) return <span>{statsError.message}</span>;
@@ -438,26 +438,28 @@ const Report: React.FC = () => {
         {/* Third Section - Most Played Scenes */}
         <div className="row mb-4">
           <div className="col-12">
-            <h3>5 najczęściej odtwarzanych scen</h3>
+            <h3>10 najczęściej odtwarzanych scen</h3>
             {scenesLoading ? (
               <LoadingIndicator />
             ) : (
-              <Slider
-                {...getSlickSliderSettings(
-                  scenesData?.findScenes.count || 5,
-                  false
-                )}
-              >
-                {scenesData?.findScenes.scenes.map((scene, index) => (
-                  <SceneCard
-                    key={scene.id}
-                    scene={scene}
-                    queue={scenesQueue}
-                    index={index}
-                    zoomIndex={1}
-                  />
-                ))}
-              </Slider>
+              <div className="recommendation-row">
+                <Slider
+                  {...getSlickSliderSettings(
+                    scenesData?.findScenes.count || 10,
+                    false
+                  )}
+                >
+                  {scenesData?.findScenes.scenes.map((scene, index) => (
+                    <SceneCard
+                      key={scene.id}
+                      scene={scene}
+                      queue={scenesQueue}
+                      index={index}
+                      zoomIndex={1}
+                    />
+                  ))}
+                </Slider>
+              </div>
             )}
           </div>
         </div>
@@ -465,13 +467,13 @@ const Report: React.FC = () => {
         {/* Fourth Section - Most Played Performers */}
         <div className="row mb-4">
           <div className="col-12">
-            <h3>5 najczęściej odtwarzanych aktorek</h3>
+            <h3>10 najczęściej odtwarzanych aktorek</h3>
             {performersLoading ? (
               <LoadingIndicator />
             ) : (
               <Slider
                 {...getSlickSliderSettings(
-                  performersData?.findPerformers.count || 5,
+                  performersData?.findPerformers.count || 10,
                   false
                 )}
               >
@@ -490,13 +492,13 @@ const Report: React.FC = () => {
         {/* Fifth Section - Performers with Most Scenes */}
         <div className="row mb-4">
           <div className="col-12">
-            <h3>5 aktorek z największą liczbą scen</h3>
+            <h3>10 aktorek z największą liczbą scen</h3>
             {performersWithMostScenesLoading ? (
               <LoadingIndicator />
             ) : (
               <Slider
                 {...getSlickSliderSettings(
-                  performersWithMostScenesData?.findPerformers.count || 5,
+                  performersWithMostScenesData?.findPerformers.count || 10,
                   false
                 )}
               >
@@ -515,26 +517,28 @@ const Report: React.FC = () => {
         {/* Sixth Section - Scenes with Most O Count */}
         <div className="row mb-4">
           <div className="col-12">
-            <h3>5 scen z największą liczbą O Count</h3>
+            <h3>10 scen z największą liczbą O Count</h3>
             {scenesWithMostOCountLoading ? (
               <LoadingIndicator />
             ) : (
-              <Slider
-                {...getSlickSliderSettings(
-                  scenesWithMostOCountData?.findScenes.count || 5,
-                  false
-                )}
-              >
-                {scenesWithMostOCountData?.findScenes.scenes.map((scene, index) => (
-                  <SceneCard
-                    key={scene.id}
-                    scene={scene}
-                    queue={scenesWithOCountQueue}
-                    index={index}
-                    zoomIndex={1}
-                  />
-                ))}
-              </Slider>
+              <div className="recommendation-row">
+                <Slider
+                  {...getSlickSliderSettings(
+                    scenesWithMostOCountData?.findScenes.count || 10,
+                    false
+                  )}
+                >
+                  {scenesWithMostOCountData?.findScenes.scenes.map((scene, index) => (
+                    <SceneCard
+                      key={scene.id}
+                      scene={scene}
+                      queue={scenesWithOCountQueue}
+                      index={index}
+                      zoomIndex={1}
+                    />
+                  ))}
+                </Slider>
+              </div>
             )}
           </div>
         </div>
@@ -542,13 +546,13 @@ const Report: React.FC = () => {
         {/* Seventh Section - Performers with Most O Count */}
         <div className="row mb-4">
           <div className="col-12">
-            <h3>5 aktorek z największą liczbą O Count</h3>
+            <h3>10 aktorek z największą liczbą O Count</h3>
             {performersWithMostOCountLoading ? (
               <LoadingIndicator />
             ) : (
               <Slider
                 {...getSlickSliderSettings(
-                  performersWithMostOCountData?.findPerformers.count || 5,
+                  performersWithMostOCountData?.findPerformers.count || 10,
                   false
                 )}
               >
@@ -567,7 +571,7 @@ const Report: React.FC = () => {
         {/* Eighth Section - Performers with Highest Average Clip Ratings */}
         <div className="row mb-4">
           <div className="col-12">
-            <h3>5 aktorek z najwyższą średnią ocen klipów</h3>
+            <h3>10 aktorek z najwyższą średnią ocen klipów</h3>
             {ratedScenesForPerformersLoading ? (
               <LoadingIndicator />
             ) : topRatedPerformers.length > 0 ? (

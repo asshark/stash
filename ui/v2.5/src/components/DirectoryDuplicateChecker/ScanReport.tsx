@@ -115,23 +115,24 @@ export const ScanReport: React.FC = () => {
     
     // Check if this job is one we're monitoring using ref to avoid stale closure
     const currentReplaceJobIds = replaceJobIdsRef.current;
-    const sceneId = Object.keys(currentReplaceJobIds).find(key => currentReplaceJobIds[key] === jobId);
+    const jobKey = Object.keys(currentReplaceJobIds).find(key => currentReplaceJobIds[key] === jobId);
+    const resolvedSceneId = jobKey?.startsWith("replace_") ? jobKey.substring("replace_".length) : jobKey;
     
     console.log("JobsSubscribe event:", {
       jobId,
       status: event.job.status,
       type: event.type,
       monitoringJobs: Object.keys(currentReplaceJobIds),
-      isMonitored: !!sceneId,
-      sceneId,
+      isMonitored: !!resolvedSceneId,
+      sceneId: resolvedSceneId,
     });
     
-    if (!sceneId) {
+    if (!jobKey || !resolvedSceneId) {
       return;
     }
 
     console.log("Replace job status update:", {
-      sceneId,
+      sceneId: resolvedSceneId,
       jobId,
       status: event.job.status,
       type: event.type,
@@ -145,12 +146,12 @@ export const ScanReport: React.FC = () => {
       // Remove job ID from map
       setReplaceJobIds(prev => {
         const newMap = { ...prev };
-        delete newMap[sceneId];
+        delete newMap[jobKey];
         return newMap;
       });
 
       if (event.job.status === GQL.JobStatus.Finished) {
-        handleJobCompletion.current(sceneId);
+        handleJobCompletion.current(resolvedSceneId);
       } else {
         setDeleting(false);
       }
@@ -203,8 +204,9 @@ export const ScanReport: React.FC = () => {
               continue;
             }
             
-            const sceneId = Object.keys(currentReplaceJobIds).find(key => currentReplaceJobIds[key] === jobId);
-            if (!sceneId) {
+            const jobKey = Object.keys(currentReplaceJobIds).find(key => currentReplaceJobIds[key] === jobId);
+            const resolvedSceneId = jobKey?.startsWith("replace_") ? jobKey.substring("replace_".length) : jobKey;
+            if (!jobKey || !resolvedSceneId) {
               continue;
             }
             
@@ -213,7 +215,7 @@ export const ScanReport: React.FC = () => {
                 job.status === GQL.JobStatus.Cancelled) {
               
               console.log("Replace job finished via polling:", {
-                sceneId,
+                sceneId: resolvedSceneId,
                 jobId,
                 status: job.status,
               });
@@ -221,12 +223,12 @@ export const ScanReport: React.FC = () => {
               // Remove job ID from map
               setReplaceJobIds(prev => {
                 const newMap = { ...prev };
-                delete newMap[sceneId];
+                delete newMap[jobKey];
                 return newMap;
               });
               
               if (job.status === GQL.JobStatus.Finished) {
-                handleJobCompletion.current(sceneId);
+                handleJobCompletion.current(resolvedSceneId);
               } else {
                 setDeleting(false);
               }

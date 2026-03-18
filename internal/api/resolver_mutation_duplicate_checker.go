@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/stashapp/stash/internal/manager"
+	"github.com/stashapp/stash/internal/manager/config"
 	"github.com/stashapp/stash/pkg/duplicatechecker"
 	"github.com/stashapp/stash/pkg/downloadchecker"
 	"github.com/stashapp/stash/pkg/fsutil"
@@ -125,6 +126,26 @@ func (r *mutationResolver) ReplaceDuplicateWithScene(ctx context.Context, sceneI
 		// Copy the duplicate file over the existing library file (keep source file)
 		if err := copyFileReplacing(duplicatePath, libraryPath); err != nil {
 			return fmt.Errorf("replacing library file %s with %s: %w", libraryPath, duplicatePath, err)
+		}
+
+		// After replacing the file on disk, rescan the destination file so that
+		// metadata such as resolution/duration (and optionally phash) is refreshed.
+		//
+		// We queue this as a separate scan job so that it runs even if the UI
+		// doesn't explicitly trigger a rescan.
+		scanInput := manager.ScanMetadataInput{
+			Paths:              []string{libraryPath},
+			ScanMetadataOptions: config.ScanMetadataOptions{
+				Rescan:             true,
+				ScanGeneratePhashes: true,
+			},
+		}
+		if scanJobID, scanErr := mgr.Scan(jobCtx, scanInput); scanErr != nil {
+			// Do not fail the replace job if the scan cannot be queued; the file has
+			// already been replaced on disk and a failed scan should not roll that back.
+			logger.Warnf("Failed to queue metadata scan for replaced file %s (scene %s): %v", libraryPath, sceneID, scanErr)
+		} else {
+			logger.Infof("Queued metadata scan job %d for replaced file %s (scene %s)", scanJobID, libraryPath, sceneID)
 		}
 
 		// Note: We do NOT remove the duplicate entry from download checker scan results
