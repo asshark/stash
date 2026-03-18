@@ -27,10 +27,59 @@ Write-Host "STAGED changes:   $stagedHasChanges"
 Write-Host "UNSTAGED changes: $unstagedHasChanges"
 ```
 
+## Wariant alternatywny: Najpierw lokalny commit, potem pobierz zmiany
+
+Ten wariant jest dobry, jeśli wolisz utworzyć **lokalne commity** ze swoich zmian, a dopiero potem pobrać nowe zdalne i je “przełożyć” przez Twoją historię (`git pull --rebase`).
+
+### Krok A1: Dodaj zmiany do indeksu
+
+Jeśli chcesz dodać wszystko (łącznie z ewentualnymi `??`):
+
+```powershell
+git add -A
+```
+
+Jeśli NIE chcesz, żeby do commita trafiła Twoja notatka `update_repo.md` (opcjonalnie):
+
+```powershell
+git restore --staged update_repo.md 2>$null
+```
+
+### Krok A2: Zrób lokalny commit
+
+```powershell
+git commit -m "WIP: lokalne zmiany"
+```
+
+### Krok A3: Pobierz nowe zmiany i zrób rebase
+
+```powershell
+git pull --rebase
+```
+
+Jeśli pojawią się konflikty w trakcie rebase:
+
+1. Rozwiąż konflikty w plikach.
+2. Dodaj rozwiązane pliki:
+   ```powershell
+   git add -A
+   ```
+3. Kontynuuj:
+   ```powershell
+   git rebase --continue
+   ```
+4. Powtarzaj aż rebase zakończy się powodzeniem.
+
+### Krok A4: Sprawdź końcowy stan
+
+```powershell
+git status -sb
+```
+
 ## Krok 3: Schowaj lokalne niezatwierdzone zmiany (stash)
 
-Upewnij się najpierw, że **nie masz lokalnych commitów** do wysłania (czyli `git status -sb` nie powinno pokazywać `ahead ...`).
-Jeśli jednak widzisz `ahead`, zatrzymaj się i daj znać (to wymaga innego scenariusza niż sam stash).
+`git stash` schowa tylko niezatwierdzone zmiany w working tree / indeksie. Twoje lokalne commity (jeśli `git status -sb` pokazuje `ahead ...`) pozostaną.
+W praktyce: jeśli masz `ahead`, to `git pull --rebase` przebazuję także Twoje lokalne commity na świeższy stan z `origin`.
 
 Następnie wybierz wariant:
 
