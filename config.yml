@@ -1,0 +1,270 @@
+autostart_video: true
+blobs_path: l:\stash\blobs
+blobs_storage: FILESYSTEM
+cache: l:\stash\cache
+calculate_md5: false
+create_image_clip_from_videos: false
+dangerous_allow_public_without_auth: "false"
+database: clips
+defaults:
+    identify_task:
+        options:
+            fieldoptions:
+                - createmissing: null
+                  field: title
+                  strategy: OVERWRITE
+                - createmissing: true
+                  field: studio
+                  strategy: MERGE
+                - createmissing: true
+                  field: performers
+                  strategy: MERGE
+                - createmissing: true
+                  field: tags
+                  strategy: MERGE
+            includemaleperformers: true
+            setcoverimage: true
+            setorganized: false
+            skipmultiplematches: true
+            skipmultiplematchtag: null
+            skipsinglenameperformers: true
+            skipsinglenameperformertag: null
+        paths: []
+        sceneids: []
+        sources:
+            - options: null
+              source:
+                scraperid: null
+                stashboxendpoint: https://stashdb.org/graphql
+                stashboxindex: null
+ffmpeg_path: ""
+ffprobe_path: ""
+gallery_cover_regex: (poster|cover|folder|board)\.[^\.]+$
+generated: l:\stash\gen
+host: 0.0.0.0
+jwt_secret_key: aa77800b211eeaa235f0819a13c255100dab0ad2878d5d23076417c4a85846d1
+language: pl-PL
+maximum_sprites: 500
+menu_items:
+    - scenes
+    - markers
+    - performers
+    - studios
+    - tags
+    - report
+metadata: l:\stash\metadata
+minimum_sprites: 10
+no_proxy: localhost,127.0.0.1,192.168.0.0/16,10.0.0.0/8,172.16.0.0/12
+nobrowser: false
+notifications_enabled: true
+parallel_tasks: 1
+password: ""
+plugins:
+    disabled:
+        - filenameParser
+        - filenamecomposer
+        - Theme-BlackHole
+    package_sources:
+        - localpath: community
+          name: Community (stable)
+          url: https://stashapp.github.io/CommunityScripts/stable/index.yml
+    settings:
+        DupFileManager:
+            zzObsoleteSettingsCheckVer2: true
+        renamefile:
+            z_keyFIeldsIncludeInFileName: true
+            zKeyFIeldsIncludeInFileName: false
+            zfieldKeyList: performers,title,studio,date
+            zseparators: ' '
+            zzdryRun: false
+plugins_path: C:\Users\areks\.stash\plugins
+port: 9999
+preview_audio: true
+preview_exclude_end: "0"
+preview_exclude_start: "0"
+preview_segment_duration: 0.75
+preview_segments: 12
+python_path: c:\Users\areks\AppData\Local\Programs\Python\Python313\python.exe
+scrapers:
+    package_sources:
+        - localpath: community
+          name: Community (stable)
+          url: https://stashapp.github.io/CommunityScrapers/stable/index.yml
+scrapers_path: C:\Users\areks\.stash\scrapers
+security_tripwire_accessed_from_public_internet: ""
+sequential_scanning: false
+session_store_key: a16c432b2429897eeae949e9309730ad5f06923d1731e4b4f6c007a9981da023
+show_one_time_moved_notification: false
+sound_on_preview: false
+sprite_interval: 30
+sprite_screenshot_width: 160
+stash:
+    - excludeimage: true
+      excludevideo: false
+      path: l:\Clips
+    - excludeimage: true
+      excludevideo: false
+      path: u:Clips2
+    - excludeimage: true
+      excludevideo: false
+      path: u:\PornHubs
+    - excludeimage: true
+      excludevideo: false
+      path: W:\Clips31
+    - excludeimage: true
+      excludevideo: false
+      path: W:\Clips30
+    - excludeimage: true
+      excludevideo: false
+      path: l:ClipsStudiosSet1
+    - excludeimage: true
+      excludevideo: false
+      path: u:ClipsStudiosSet2
+    - excludeimage: true
+      excludevideo: false
+      path: w:ClipsStudiosSet3
+stash_boxes:
+    - apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiJjMjAzYjEzMy1jODc2LTQ0OGMtOTlhNS04ODVkODY5Zjk5YWEiLCJzdWIiOiJBUElLZXkiLCJpYXQiOjE3NTg4MjY4Mzl9.Ce9zlrkkCpUQNw9jq5WKgA2bj_EWw89HqjUmj4txjyc
+      endpoint: https://stashdb.org/graphql
+      maxrequestsperminute: 0
+      name: shark
+    - apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiJiZDk0YzY5Mi1jMTQ4LTQwOWMtOTdkZS1mZDhmYWFiN2NlZTQiLCJzdWIiOiJBUElLZXkiLCJpYXQiOjE3NjIyMDc0NTN9.bbS-pRAxVF9npYA48GUCoJybhGA12_75j0tLUO7vhOs
+      endpoint: https://fansdb.cc/graphql
+      maxrequestsperminute: 0
+      name: fandb
+theme_color: '#202b33'
+ui:
+    advancedMode: true
+    frontPageContent:
+        - __typename: SavedFilter
+          savedFilterId: "4"
+        - __typename: CustomFilter
+          direction: DESC
+          message:
+            id: recently_released_objects
+            values:
+                objects: Sceny
+          mode: SCENES
+          sortBy: date
+        - __typename: CustomFilter
+          direction: DESC
+          message:
+            id: recently_added_objects
+            values:
+                objects: Studia
+          mode: STUDIOS
+          sortBy: created_at
+        - __typename: CustomFilter
+          direction: DESC
+          message:
+            id: recently_released_objects
+            values:
+                objects: Groups
+          mode: GROUPS
+          sortBy: date
+        - __typename: CustomFilter
+          direction: DESC
+          message:
+            id: recently_added_objects
+            values:
+                objects: Aktorzy
+          mode: PERFORMERS
+          sortBy: created_at
+        - __typename: CustomFilter
+          direction: DESC
+          message:
+            id: recently_released_objects
+            values:
+                objects: Galerie
+          mode: GALLERIES
+          sortBy: date
+    lastNoteSeen: 20251026
+    pinnedFilters:
+        performers:
+            - gender
+            - country
+            - rating
+        scenes:
+            - tags
+            - path
+            - organized
+            - rating
+            - media_info.phash
+            - media_info.hash
+    showChildStudioContent: true
+    taggerConfig:
+        blacklist:
+            - \sXXX\s
+            - 1080p
+            - 720p
+            - 2160p
+            - KTR
+            - RARBG
+            - \scom\s
+            - \[
+            - \]
+        createParentStudios: true
+        excludedPerformerFields:
+            - name
+        excludedStudioFields:
+            - name
+        fingerprintQueue:
+            https://fansdb.cc/graphql:
+                - "24506"
+                - "24823"
+                - "26065"
+                - "40197"
+                - "40263"
+                - "47906"
+                - "47941"
+                - "47942"
+                - "47943"
+                - "47945"
+                - "47946"
+                - "47947"
+                - "48047"
+                - "46850"
+                - "32715"
+                - "26057"
+                - "11394"
+                - "6437"
+                - "29627"
+                - "11414"
+                - "11553"
+                - "11402"
+                - "39384"
+            https://stashdb.org/graphql:
+                - "47908"
+        markSceneAsOrganizedOnSave: false
+        mode: auto
+        selectedEndpoint: https://stashdb.org/graphql
+        setCoverImage: true
+        setTags: true
+        showMales: true
+        tagOperation: merge
+    taskDefaults:
+        generate:
+            covers: false
+            markers: false
+            phashes: true
+            previewOptions:
+                previewExcludeEnd: "0"
+                previewExcludeStart: "0"
+                previewPreset: slow
+                previewSegmentDuration: 0.75
+                previewSegments: 12
+            previews: false
+            sprites: false
+        scan:
+            rescan: false
+            scanGenerateClipPreviews: false
+            scanGenerateCovers: true
+            scanGenerateImagePreviews: false
+            scanGeneratePhashes: true
+            scanGeneratePreviews: false
+            scanGenerateSprites: false
+            scanGenerateThumbnails: false
+use_custom_sprite_interval: false
+username: ""
+video_file_naming_algorithm: OSHASH
+write_image_thumbnails: true

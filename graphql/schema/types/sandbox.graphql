@@ -1,0 +1,104 @@
+"Exact studio name -> destination root directory (must be inside a configured library)."
+input SandboxStudioDirectoryMapEntry {
+  studioName: String!
+  directoryPath: String!
+  """
+  Studio names under this anchor (between anchor and scene studio, inclusive of the scene studio) that must not use this directoryPath.
+  If the scene's path toward this anchor passes through any listed name, this anchor is skipped and the next mapped ancestor (if any) is used.
+  Matching is case-insensitive; empty strings are ignored.
+  """
+  excludedChildStudios: [String!]
+  """
+  When set (non-empty), only scenes whose path from the scene studio toward this anchor passes through at least one listed name use this directoryPath.
+  When omitted or empty, all child studios under this anchor are included (subject to `excludedChildStudios`).
+  Matching is case-insensitive; empty strings are ignored. Both filters apply together: excluded wins over included.
+  """
+  includedChildStudios: [String!]
+}
+
+"""Default FEMALE: female + transgender-female performers."""
+enum SandboxOrganizePerformersGenderFilter {
+  FEMALE
+  MALE
+  ANY
+}
+
+enum SandboxOrganizePerformersSortBy {
+  NAME
+  RATING100
+}
+
+"""Tuning for the .Performers template field (see filenamePlaceholders)."""
+input SandboxOrganizePerformersPlaceholderInput {
+  genderFilter: SandboxOrganizePerformersGenderFilter
+  """Between performer names (default: comma + ASCII space)."""
+  separator: String
+  sortBy: SandboxOrganizePerformersSortBy
+}
+
+"""Tuning for the .StudioPath template field."""
+input SandboxOrganizeStudioPathPlaceholderInput {
+  """Join character between studios (leaf → root). Default: underscore."""
+  studioJoiner: String
+  """When true, remove all Unicode whitespace from each studio name before join."""
+  stripWhitespaceFromStudioNames: Boolean
+}
+
+"""Optional settings for filename template placeholders (nested under the mutation input)."""
+input SandboxFilenamePlaceholdersInput {
+  performers: SandboxOrganizePerformersPlaceholderInput
+  studioPath: SandboxOrganizeStudioPathPlaceholderInput
+}
+
+input OrganizeScenesByStudioInput {
+  """
+  Studio name -> physical base directory. For a scene on a child studio, files go under
+  subfolders named after each studio from the mapped ancestor down to the scene studio.
+  Each `studioName` must be a **root** studio in Stash (no parent studio); otherwise the mutation fails before the job runs.
+  """
+  studioDirectories: [SandboxStudioDirectoryMapEntry!]!
+  """
+  When true: no file moves; append one line per qualifying clip (scene id, title, source => dest) to a log file.
+  """
+  dryMode: Boolean
+  """Optional log file path. When provided, the log file is written in both dry and non-dry runs. When null/omitted, no log file is created."""
+  dryRunLogPath: String
+  """
+  Non-dry only; ignored when dryMode is true.
+  Omit or null: unlimited moves.
+  0: create destination folder trees (DB + disk) only — no file moves.
+  N > 0: at most N successful primary-file moves per scene studio (the studio assigned to each scene — each child studio under a mapped anchor gets its own cap of N).
+  """
+  fileCountLimit: Int
+  """
+  When true, rename the primary file basename if it does not match `fileNameFormat`
+  (Go text/template; see `fileNameFormat`). Extension is always preserved.
+  Requires non-empty performers list (per `filenamePlaceholders.performers`), title, and studio path; otherwise the original basename is kept.
+  """
+  reFormatFileName: Boolean
+  """
+  Go text/template for the basename **without extension**; extension from the current file is appended.
+  If empty while `reFormatFileName` is true, the default is:
+  `{{.Performers}} - {{.Title}} [{{.StudioPath}}]{{if .Date}} ({{.Date}}){{end}}`
+  Fields: Performers, Title, StudioPath, Date (optional). `FemalePerformers` is still set as an alias of Performers for older templates.
+  """
+  fileNameFormat: String
+  """
+  Optional: configure how .Performers and .StudioPath are built (gender, separator, sort, studio joiner, whitespace).
+  Omitted fields use defaults documented on each nested input.
+  """
+  filenamePlaceholders: SandboxFilenamePlaceholdersInput
+  """
+  When true, place each primary file in a subfolder named after the scene date year (e.g. `2021`) under the resolved studio directory (after hierarchy segments).
+  Scenes without a date stay directly under that studio directory (no extra folder).
+  """
+  groupByYear: Boolean
+}
+
+extend type Mutation {
+  """
+  [SANDBOX] Organize primary video files on disk by studio mapping and parent hierarchy.
+  Validates that destination roots lie within library paths. Returns the queued job ID.
+  """
+  sandboxOrganizeScenesByStudio(input: OrganizeScenesByStudioInput!): ID!
+}

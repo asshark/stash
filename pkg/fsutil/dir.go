@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -21,11 +22,53 @@ func DirExists(path string) (bool, error) {
 	return true, nil
 }
 
+// normalizeWindowsPathForCompare turns drive-relative Windows paths ("C:foo")
+// into absolute-looking paths ("C:\foo") so they compare equal to paths entered
+// with a slash after the drive letter ("C:/foo" -> "C:\foo" via Clean).
+func normalizeWindowsPathForCompare(p string) string {
+	p = filepath.Clean(p)
+	if runtime.GOOS != "windows" || len(p) < 3 {
+		return p
+	}
+	if p[1] != ':' {
+		return p
+	}
+	if p[2] == '\\' || p[2] == '/' {
+		return p
+	}
+	return p[:2] + `\` + p[2:]
+}
+
+// CanonicalizePath returns a normalized form of p suitable for comparison.
+// On Windows, drive-relative paths like "C:foo" become "C:\foo".
+func CanonicalizePath(p string) string {
+	if runtime.GOOS == "windows" {
+		return normalizeWindowsPathForCompare(p)
+	}
+	return filepath.Clean(p)
+}
+
+// PathEqual reports whether a and b refer to the same filesystem path.
+// On Windows, comparison is case-insensitive and treats "l:foo" and "l:\foo" as equivalent.
+func PathEqual(a, b string) bool {
+	a = CanonicalizePath(a)
+	b = CanonicalizePath(b)
+	if runtime.GOOS == "windows" {
+		return strings.EqualFold(a, b)
+	}
+	return a == b
+}
+
 // IsPathInDir returns true if pathToCheck is within dir.
 func IsPathInDir(dir, pathToCheck string) bool {
 	// #4425 - normalize so NFC/NFD differences don't break containment checks
 	dir = NormalizePath(dir)
 	pathToCheck = NormalizePath(pathToCheck)
+
+	if runtime.GOOS == "windows" {
+		dir = normalizeWindowsPathForCompare(dir)
+		pathToCheck = normalizeWindowsPathForCompare(pathToCheck)
+	}
 
 	rel, err := filepath.Rel(dir, pathToCheck)
 

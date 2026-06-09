@@ -1,0 +1,113 @@
+# Sandbox: organize scene primary files by studio mapping
+# Open Stash GraphQL Playground: http://localhost:9999/playground
+# (Settings → Tools → GraphQL playground)
+#
+# Copy a mutation block below into the playground editor.
+# Each studioName must be a ROOT studio in Stash (no parent studio).
+# directoryPath must lie inside a configured library path.
+
+# --- Dry run: log only (no moves). Set dryRunLogPath or omit it for no file log. ---
+mutation OrganizeScenesByStudio_DryRun {
+  sandboxOrganizeScenesByStudio(
+    input: {
+      studioDirectories: [
+        {
+          studioName: "My Studio"
+          directoryPath: "L:\\Lib\\MyStudio"
+          excludedChildStudios: ["Skip This Child"]
+          includedChildStudios: []
+        }
+      ]
+      dryMode: true
+      dryRunLogPath: "L:\\stash\\gen\\organize_scenes_by_studio_dry.log"
+      groupByYear: true
+      reFormatFileName: true
+      fileNameFormat: "{{.Performers}} - {{.Title}} [{{.StudioPath}}]{{if .Date}} ({{.Date}}){{end}}"
+      filenamePlaceholders: {
+        performers: {
+          genderFilter: FEMALE
+          separator: ", "
+          sortBy: RATING100
+        }
+        studioPath: {
+          studioJoiner: "_"
+          stripWhitespaceFromStudioNames: true
+        }
+      }
+    }
+  )
+}
+
+# --- Apply: move files. Omit fileCountLimit for unlimited moves per scene studio. ---
+mutation OrganizeScenesByStudio_Apply {
+  sandboxOrganizeScenesByStudio(
+    input: {
+      studioDirectories: [
+        {
+          studioName: "My Studio"
+          directoryPath: "L:\\Lib\\MyStudio"
+        }
+      ]
+      dryMode: false
+      dryRunLogPath: "L:\\stash\\gen\\organize_scenes_by_studio_apply.log"
+      groupByYear: false
+      reFormatFileName: false
+      # fileCountLimit omitted = unlimited successful moves per scene studio
+    }
+  )
+}
+
+# --- Apply with cap: at most N successful moves per scene studio (leaf). ---
+mutation OrganizeScenesByStudio_ApplyLimited {
+  sandboxOrganizeScenesByStudio(
+    input: {
+      studioDirectories: [
+        {
+          studioName: "My Studio"
+          directoryPath: "L:\\Lib\\MyStudio"
+          includedChildStudios: ["Only This Child", "Another Child"]
+        }
+      ]
+      dryMode: false
+      fileCountLimit: 5
+      groupByYear: true
+    }
+  )
+}
+
+# --- Folders only: create destination trees (DB + disk), no file moves. ---
+mutation OrganizeScenesByStudio_FoldersOnly {
+  sandboxOrganizeScenesByStudio(
+    input: {
+      studioDirectories: [
+        {
+          studioName: "My Studio"
+          directoryPath: "L:\\Lib\\MyStudio"
+        }
+      ]
+      dryMode: false
+      fileCountLimit: 0
+    }
+  )
+}
+
+# --- Multiple mapped anchor studios ---
+mutation OrganizeScenesByStudio_MultipleAnchors {
+  sandboxOrganizeScenesByStudio(
+    input: {
+      studioDirectories: [
+        {
+          studioName: "Studio Set 1"
+          directoryPath: "L:\\ClipsStudiosSet1"
+        }
+        {
+          studioName: "Studio Set 2"
+          directoryPath: "U:\\ClipsStudiosSet2"
+          excludedChildStudios: ["Legacy Substudio"]
+        }
+      ]
+      dryMode: true
+      dryRunLogPath: "L:\\stash\\gen\\organize_multi_dry.log"
+    }
+  )
+}

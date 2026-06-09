@@ -60,6 +60,27 @@ func TestIsPathInDir(t *testing.T) {
 	}
 }
 
+func TestIsPathInDirWindowsDriveLetter(t *testing.T) {
+	if runtime.GOOS != "windows" {
+		t.Skip()
+	}
+	assert := assert.New(t)
+	// Library configured as "l:ClipsStudiosSet1" vs mutation path "l:/ClipsStudiosSet1" (Clean -> l:\...)
+	assert.True(IsPathInDir(`l:ClipsStudiosSet1`, `l:/ClipsStudiosSet1`))
+	assert.True(IsPathInDir(`l:ClipsStudiosSet1`, `l:\ClipsStudiosSet1\sub`))
+	assert.False(IsPathInDir(`l:ClipsStudiosSet1`, `m:\ClipsStudiosSet1`))
+}
+
+func TestPathEqualWindowsDriveRelativeVsAbsolute(t *testing.T) {
+	if runtime.GOOS != "windows" {
+		t.Skip()
+	}
+	a := `l:ClipsStudiosSet1\21Sextury\file.wmv`
+	b := `l:\ClipsStudiosSet1\21Sextury\file.wmv`
+	assert.True(t, PathEqual(a, b))
+	assert.True(t, PathEqual(`L:\same\file.wmv`, `l:\same\file.wmv`))
+}
+
 func TestDirExists(t *testing.T) {
 	type test struct {
 		dir      string

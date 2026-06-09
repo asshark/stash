@@ -1474,6 +1474,8 @@
   "sceneTagger": "Scene Tagger",
   "scene_code": "Studio Code",
   "scene_marker_count": "Scene Marker Count",
+  "title_format": "Scene Name",
+  "scene_title_format_placeholder": "Total Commander–style pattern ([N]/[P]/[G]/[E], [N10--12], [C10+5:3], [YMD], [U]/[L]/[F], [[] … []])",
   "scene_count": "Scene Count",
   "scenes_duration": "Scene Duration",
   "scenes_size": "Scene Size",

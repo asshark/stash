@@ -110,8 +110,15 @@ func (m *Mover) Move(ctx context.Context, f models.File, folder *models.Folder, 
 		return fmt.Errorf("updating file %s: %w", oldPath, err)
 	}
 
-	// then move the file
-	return m.moveFile(oldPath, newPath)
+	// Move on disk after the transaction commits so a rollback (e.g. job cancel mid-txn)
+	// does not leave the file at the new path while the database still references the old path.
+	src, dst := oldPath, newPath
+	txn.AddPostCommitHook(ctx, func(ctx context.Context) {
+		if err := m.moveFile(src, dst); err != nil {
+			logger.Errorf("moving file on disk after database commit (%s -> %s): %v", src, dst, err)
+		}
+	})
+	return nil
 }
 
 func (m *Mover) CreateFolderHierarchy(path string) error {

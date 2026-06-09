@@ -21,6 +21,11 @@ import { IndeterminateCheckbox } from "../Shared/IndeterminateCheckbox";
 import { BulkUpdateFormGroup, BulkUpdateTextInput } from "../Shared/BulkUpdate";
 import { BulkUpdateDateInput } from "../Shared/DateInput";
 import { getDateError } from "src/utils/yup";
+import { MultiSetModeButtons } from "../Shared/MultiSet";
+import {
+  getScenePrimaryFilePath,
+  renderSceneTitlePattern,
+} from "src/utils/sceneTitleFormatter";
 
 interface IListOperationProps {
   selected: GQL.SlimSceneDataFragment[];
@@ -67,9 +72,14 @@ export const EditScenesDialog: React.FC<IListOperationProps> = (
   const unsetDisabled = props.selected.length < 2;
 
   const [updateScenes] = useBulkSceneUpdate();
+  const [updateScene] = GQL.useSceneUpdateMutation();
 
   // Network state
   const [isUpdating, setIsUpdating] = useState(false);
+  const [titleMode, setTitleMode] = useState<GQL.BulkUpdateIdMode>(
+    GQL.BulkUpdateIdMode.Set
+  );
+  const [titleTemplate, setTitleTemplate] = useState("");
 
   const aggregateState = useMemo(() => {
     const updateState: Partial<GQL.BulkSceneUpdateInput> = {};
@@ -130,10 +140,65 @@ export const EditScenesDialog: React.FC<IListOperationProps> = (
     return sceneInput;
   }
 
+  function getUpdatedSceneTitle(
+    scene: GQL.SlimSceneDataFragment,
+    index: number
+  ): string {
+    const filePath = getScenePrimaryFilePath(scene);
+    const generatedTitle = renderSceneTitlePattern(titleTemplate, filePath, {
+      sequenceIndex: index,
+    });
+    const currentTitle = scene.title ?? "";
+
+    if (titleMode === GQL.BulkUpdateIdMode.Add) {
+      return `${currentTitle}${generatedTitle}`;
+    }
+
+    if (titleMode === GQL.BulkUpdateIdMode.Remove) {
+      return "";
+    }
+
+    return generatedTitle;
+  }
+
+  const titlePreviewTooltip = useMemo(() => {
+    const previewItems = props.selected
+      .slice(0, 5)
+      .map((scene, index) => `${index + 1}. ${getUpdatedSceneTitle(scene, index)}`);
+
+    if (previewItems.length === 0) {
+      return undefined;
+    }
+
+    return previewItems.join("\n");
+  }, [props.selected, titleMode, titleTemplate]);
+
   async function onSave() {
     setIsUpdating(true);
     try {
       await updateScenes({ variables: { input: getSceneInput() } });
+
+      const shouldApplyTitle =
+        titleMode === GQL.BulkUpdateIdMode.Remove ||
+        titleTemplate.trim().length > 0;
+
+      if (shouldApplyTitle) {
+        await Promise.all(
+          props.selected.map(async (scene, index) => {
+            const updatedTitle = getUpdatedSceneTitle(scene, index);
+
+            await updateScene({
+              variables: {
+                input: {
+                  id: scene.id,
+                  title: updatedTitle,
+                },
+              },
+            });
+          })
+        );
+      }
+
       Toast.success(
         intl.formatMessage(
           { id: "toast.updated_entity" },
@@ -189,6 +254,26 @@ export const EditScenesDialog: React.FC<IListOperationProps> = (
               valueChanged={(newValue) => setUpdateField({ code: newValue })}
               unsetDisabled={unsetDisabled}
             />
+          </BulkUpdateFormGroup>
+
+          <BulkUpdateFormGroup name="title_format" inline={false}>
+            <div className="multi-set">
+              <MultiSetModeButtons
+                mode={titleMode}
+                onSetMode={setTitleMode}
+                disabled={isUpdating}
+              />
+              <Form.Control
+                type="text"
+                value={titleTemplate}
+                onChange={(event) => setTitleTemplate(event.currentTarget.value)}
+                placeholder={intl.formatMessage({
+                  id: "scene_title_format_placeholder",
+                })}
+                title={titlePreviewTooltip}
+                disabled={isUpdating}
+              />
+            </div>
           </BulkUpdateFormGroup>
 
           <BulkUpdateFormGroup name="date">

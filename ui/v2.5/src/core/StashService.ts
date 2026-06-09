@@ -2595,6 +2595,8 @@ export const useDLNAStatus = () =>
 export const useJobQueue = () =>
   GQL.useJobQueueQuery({
     fetchPolicy: "no-cache",
+    // Resync when WebSocket job events are missed (queue briefly empty while work continues).
+    pollInterval: 2000,
   });
 
 export const useLogs = () =>

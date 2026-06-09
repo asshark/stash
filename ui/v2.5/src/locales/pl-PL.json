@@ -1283,6 +1283,8 @@
     "scene": "Scena",
     "sceneTagger": "Otagowywacz scen",
     "scene_code": "Kod studia",
+    "title_format": "Nazwa sceny",
+    "scene_title_format_placeholder": "Wzorzec jak w Total Commander ([N]/[P]/[G]/[E], [N10--12], [C10+5:3], [YMD], [U]/[L]/[F], [[] … []])",
     "scene_count": "Liczba scen",
     "scene_created_at": "Scena utworzona",
     "scene_date": "Data sceny",

@@ -1,0 +1,165 @@
+# Generated from direct subfolders of:
+#   L:\ClipsStudiosSet1  (4 studios)
+#   U:\ClipsStudiosSet2  (16 studios)
+#   W:\ClipsStudiosSet3  (32 studios)
+# Scan date: 2026-05-17 — re-run listing after you add/remove folders on disk.
+#
+# studioName must match the studio name in Stash (root studio, no parent).
+# directoryPath = that studio's folder under the set root.
+# Use one mutation at a time in GraphQL Playground.
+
+mutation OrganizeScenesByStudio_ClipsStudiosSet1 {
+  sandboxOrganizeScenesByStudio(
+    input: {
+      studioDirectories: [
+        { studioName: "21", directoryPath: "L:\\ClipsStudiosSet1\\21" }
+        { studioName: "Anal Vids", directoryPath: "L:\\ClipsStudiosSet1\\Anal Vids" }
+        { studioName: "AnalVids", directoryPath: "L:\\ClipsStudiosSet1\\AnalVids" }
+        {
+          studioName: "Angelo Godshack Original"
+          directoryPath: "L:\\ClipsStudiosSet1\\Angelo Godshack Original"
+        }
+        { studioName: "DDF Network", directoryPath: "L:\\ClipsStudiosSet1\\DDF Network" }
+      ]
+      dryMode: true
+      dryRunLogPath: "L:\\stash\\gen\\organize_ClipsStudiosSet1_dry.log"
+      groupByYear: true
+      reFormatFileName: true
+      fileNameFormat: "{{.Performers}} - {{.Title}} [{{.StudioPath}}]{{if .Date}} ({{.Date}}){{end}}"
+      filenamePlaceholders: {
+        performers: { genderFilter: FEMALE, separator: ", ", sortBy: RATING100 }
+        studioPath: { studioJoiner: "_", stripWhitespaceFromStudioNames: true }
+      }
+    }
+  )
+}
+
+mutation OrganizeScenesByStudio_ClipsStudiosSet2 {
+  sandboxOrganizeScenesByStudio(
+    input: {
+      studioDirectories: [
+        {
+          studioName: "1 Pass for All Sites"
+          directoryPath: "U:\\ClipsStudiosSet2\\1 Pass for All Sites"
+        }
+        { studioName: "18videoz", directoryPath: "U:\\ClipsStudiosSet2\\18videoz" }
+        { studioName: "AfricanBucks", directoryPath: "U:\\ClipsStudiosSet2\\AfricanBucks" }
+        { studioName: "Czech AV", directoryPath: "U:\\ClipsStudiosSet2\\Czech AV" }
+        { studioName: "Deluxe Coin", directoryPath: "U:\\ClipsStudiosSet2\\Deluxe Coin" }
+        { studioName: "Dorcel", directoryPath: "U:\\ClipsStudiosSet2\\Dorcel" }
+        {
+          studioName: "Extreme Movie Pass"
+          directoryPath: "U:\\ClipsStudiosSet2\\Extreme Movie Pass"
+        }
+        { studioName: "FerroNetwork", directoryPath: "U:\\ClipsStudiosSet2\\FerroNetwork" }
+        { studioName: "My Dirty Hobby", directoryPath: "U:\\ClipsStudiosSet2\\My Dirty Hobby" }
+        { studioName: "No Rest Network", directoryPath: "U:\\ClipsStudiosSet2\\No Rest Network" }
+        { studioName: "PornCZ", directoryPath: "U:\\ClipsStudiosSet2\\PornCZ" }
+        { studioName: "Private", directoryPath: "U:\\ClipsStudiosSet2\\Private" }
+        {
+          studioName: "Teen Mega World"
+          directoryPath: "U:\\ClipsStudiosSet2\\Teen Mega World"
+        }
+        { studioName: "VR", directoryPath: "U:\\ClipsStudiosSet2\\VR" }
+        { studioName: "Woodman", directoryPath: "U:\\ClipsStudiosSet2\\Woodman" }
+        { studioName: "WTFPass", directoryPath: "U:\\ClipsStudiosSet2\\WTFPass" }
+        { studioName: "xes.pl", directoryPath: "U:\\ClipsStudiosSet2\\xes.pl" }
+      ]
+      dryMode: true
+      dryRunLogPath: "U:\\stash\\gen\\organize_ClipsStudiosSet2_dry.log"
+      groupByYear: true
+      reFormatFileName: true
+      fileNameFormat: "{{.Performers}} - {{.Title}} [{{.StudioPath}}]{{if .Date}} ({{.Date}}){{end}}"
+      filenamePlaceholders: {
+        performers: { genderFilter: FEMALE, separator: ", ", sortBy: RATING100 }
+        studioPath: { studioJoiner: "_", stripWhitespaceFromStudioNames: true }
+      }
+    }
+  )
+}
+
+mutation OrganizeScenesByStudio_ClipsStudiosSet3 {
+  sandboxOrganizeScenesByStudio(
+    input: {
+      studioDirectories: [
+        { studioName: "Adult Prime", directoryPath: "W:\\ClipsStudiosSet3\\Adult Prime" }
+        {
+          studioName: "Adult Time (Network)"
+          directoryPath: "W:\\ClipsStudiosSet3\\Adult Time (Network)"
+        }
+        {
+          studioName: "Adult Time Originals"
+          directoryPath: "W:\\ClipsStudiosSet3\\Adult Time Originals"
+        }
+        { studioName: "Babes (Network)", directoryPath: "W:\\ClipsStudiosSet3\\Babes (Network)" }
+        { studioName: "BangBros", directoryPath: "W:\\ClipsStudiosSet3\\BangBros" }
+        { studioName: "Brazzers", directoryPath: "W:\\ClipsStudiosSet3\\Brazzers" }
+        {
+          studioName: "Devil's Film (Network)"
+          directoryPath: "W:\\ClipsStudiosSet3\\Devil's Film (Network)"
+        }
+        {
+          studioName: "Digital Playground"
+          directoryPath: "W:\\ClipsStudiosSet3\\Digital Playground"
+        }
+        { studioName: "Evil Angel", directoryPath: "W:\\ClipsStudiosSet3\\Evil Angel" }
+        { studioName: "Fakehub", directoryPath: "W:\\ClipsStudiosSet3\\Fakehub" }
+        {
+          studioName: "Fantasy Massage (Network)"
+          directoryPath: "W:\\ClipsStudiosSet3\\Fantasy Massage (Network)"
+        }
+        { studioName: "Fuck You Cash", directoryPath: "W:\\ClipsStudiosSet3\\Fuck You Cash" }
+        {
+          studioName: "Full Porn Network"
+          directoryPath: "W:\\ClipsStudiosSet3\\Full Porn Network"
+        }
+        { studioName: "It's POV", directoryPath: "W:\\ClipsStudiosSet3\\It's POV" }
+        {
+          studioName: "Jules Jordan (Network)"
+          directoryPath: "W:\\ClipsStudiosSet3\\Jules Jordan (Network)"
+        }
+        { studioName: "LetsDoeIt", directoryPath: "W:\\ClipsStudiosSet3\\LetsDoeIt" }
+        { studioName: "Life Selector", directoryPath: "W:\\ClipsStudiosSet3\\Life Selector" }
+        { studioName: "MetArt Network", directoryPath: "W:\\ClipsStudiosSet3\\MetArt Network" }
+        {
+          studioName: "Mile High Media"
+          directoryPath: "W:\\ClipsStudiosSet3\\Mile High Media"
+        }
+        { studioName: "Mofos", directoryPath: "W:\\ClipsStudiosSet3\\Mofos" }
+        {
+          studioName: "Naughty America (Network)"
+          directoryPath: "W:\\ClipsStudiosSet3\\Naughty America (Network)"
+        }
+        { studioName: "Nubile Films", directoryPath: "W:\\ClipsStudiosSet3\\Nubile Films" }
+        {
+          studioName: "Nubiles Porn (Network)"
+          directoryPath: "W:\\ClipsStudiosSet3\\Nubiles Porn (Network)"
+        }
+        { studioName: "Perfect Gonzo", directoryPath: "W:\\ClipsStudiosSet3\\Perfect Gonzo" }
+        { studioName: "Reality Kings", directoryPath: "W:\\ClipsStudiosSet3\\Reality Kings" }
+        { studioName: "Sexy Hub", directoryPath: "W:\\ClipsStudiosSet3\\Sexy Hub" }
+        { studioName: "Tainster", directoryPath: "W:\\ClipsStudiosSet3\\Tainster" }
+        {
+          studioName: "TeamSkeet (Network)"
+          directoryPath: "W:\\ClipsStudiosSet3\\TeamSkeet (Network)"
+        }
+        { studioName: "Twistys", directoryPath: "W:\\ClipsStudiosSet3\\Twistys" }
+        { studioName: "VIP 4K", directoryPath: "W:\\ClipsStudiosSet3\\VIP 4K" }
+        {
+          studioName: "Vixen Media Group"
+          directoryPath: "W:\\ClipsStudiosSet3\\Vixen Media Group"
+        }
+        { studioName: "Wow (Network)", directoryPath: "W:\\ClipsStudiosSet3\\Wow (Network)" }
+      ]
+      dryMode: true
+      dryRunLogPath: "W:\\stash\\gen\\organize_ClipsStudiosSet3_dry.log"
+      groupByYear: true
+      reFormatFileName: true
+      fileNameFormat: "{{.Performers}} - {{.Title}} [{{.StudioPath}}]{{if .Date}} ({{.Date}}){{end}}"
+      filenamePlaceholders: {
+        performers: { genderFilter: FEMALE, separator: ", ", sortBy: RATING100 }
+        studioPath: { studioJoiner: "_", stripWhitespaceFromStudioNames: true }
+      }
+    }
+  )
+}

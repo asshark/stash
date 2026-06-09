@@ -69,8 +69,8 @@ func (s StashConfigs) GetStashRootFromDirPath(dirPath string) string {
 func (s StashConfigs) Paths() []string {
 	paths := make([]string, len(s))
 	for i, c := range s {
-		// #6618 - clean the path to ensure comparison works correctly
-		paths[i] = filepath.Clean(c.Path)
+		// #6618 - clean + canonicalize so roots match organize/scan paths (e.g. Windows "l:foo" vs "l:\foo").
+		paths[i] = fsutil.CanonicalizePath(filepath.Clean(c.Path))
 	}
 	return paths
 }

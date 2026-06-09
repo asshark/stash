@@ -4,22 +4,77 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
-	"slices"
+	"runtime"
 	"strings"
 	"time"
 
+	"github.com/stashapp/stash/pkg/fsutil"
 	"github.com/stashapp/stash/pkg/logger"
 	"github.com/stashapp/stash/pkg/models"
 )
+
+// pathIsConfiguredRoot reports whether path is exactly one of the configured library root paths,
+// after normalizing Windows drive-relative forms (e.g. "l:foo" vs "l:\foo").
+func pathIsConfiguredRoot(path string, rootPaths []string) bool {
+	path = fsutil.CanonicalizePath(filepath.Clean(path))
+	for _, r := range rootPaths {
+		root := fsutil.CanonicalizePath(filepath.Clean(r))
+		if fsutil.PathEqual(path, root) {
+			return true
+		}
+	}
+	return false
+}
+
+// windowsFolderPathLookupVariants returns path plus the drive-relative spelling when path is like "L:\rest"
+// (same logical location as "L:rest" for Stash library roots on Windows).
+func windowsFolderPathLookupVariants(p string) []string {
+	p = fsutil.CanonicalizePath(filepath.Clean(p))
+	if runtime.GOOS != "windows" || len(p) < 3 || p[1] != ':' {
+		return []string{p}
+	}
+	if p[2] != '\\' && p[2] != '/' {
+		return []string{p}
+	}
+	rel := p[3:]
+	if rel == "" {
+		return []string{p}
+	}
+	alt := p[:2] + rel
+	if alt == p {
+		return []string{p}
+	}
+	return []string{p, alt}
+}
+
+func findExistingFolderByPath(ctx context.Context, fc models.FolderFinderCreator, path string) (*models.Folder, error) {
+	// Windows volumes are case-insensitive; DB paths may differ in case or drive-relative spelling (l:foo vs l:\foo).
+	caseSensitive := runtime.GOOS != "windows"
+	variants := windowsFolderPathLookupVariants(path)
+	seen := make(map[string]struct{}, len(variants))
+	for _, v := range variants {
+		if _, ok := seen[v]; ok {
+			continue
+		}
+		seen[v] = struct{}{}
+		folder, err := fc.FindByPath(ctx, v, caseSensitive)
+		if err != nil {
+			return nil, err
+		}
+		if folder != nil {
+			return folder, nil
+		}
+	}
+	return nil, nil
+}
 
 // GetOrCreateFolderHierarchy gets the folder for the given path, or creates a folder hierarchy for the given path if one if no existing folder is found.
 // Creates folder entries for each level of the hierarchy that doesn't already exist, up to the provided root paths.
 // Does not create any folders in the file system.
 func GetOrCreateFolderHierarchy(ctx context.Context, fc models.FolderFinderCreator, path string, rootPaths []string) (*models.Folder, error) {
+	path = fsutil.CanonicalizePath(filepath.Clean(path))
 	// get or create folder hierarchy
-	// assume case sensitive when searching for the folder
-	const caseSensitive = true
-	folder, err := fc.FindByPath(ctx, path, caseSensitive)
+	folder, err := findExistingFolderByPath(ctx, fc, path)
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +82,7 @@ func GetOrCreateFolderHierarchy(ctx context.Context, fc models.FolderFinderCreat
 	if folder == nil {
 		var parentID *models.FolderID
 
-		if !slices.Contains(rootPaths, path) {
+		if !pathIsConfiguredRoot(path, rootPaths) {
 			parentPath := filepath.Dir(path)
 
 			// safety check - don't allow parent path to be the same as the current path,
@@ -42,6 +97,9 @@ func GetOrCreateFolderHierarchy(ctx context.Context, fc models.FolderFinderCreat
 			parent, err := GetOrCreateFolderHierarchy(ctx, fc, parentPath, rootPaths)
 			if err != nil {
 				return nil, err
+			}
+			if parent == nil {
+				return nil, fmt.Errorf("could not resolve parent folder for %q (parent path %q)", path, parentPath)
 			}
 
 			parentID = &parent.ID
