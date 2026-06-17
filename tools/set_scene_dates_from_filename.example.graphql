@@ -1,0 +1,44 @@
+# Sandbox: set scene dates extracted from the primary file name
+# Open Stash GraphQL Playground: http://localhost:9999/playground
+# (Settings → Tools → GraphQL playground)
+#
+# Copy a mutation block below into the playground editor.
+# The mutation queues a task (returns the job ID); progress and per-scene
+# changes are written to the Stash log (info level).
+#
+# Supported formats (tried in the given order, first match wins):
+#   YYYY_MM_DD          -> 2021-05-12
+#   DD_MM_YYYY          -> 12-05-2021
+#   YYYY_DOT_MM_DOT_DD  -> 2021.05.12
+#   DD_DOT_MM_DOT_YYYY  -> 12.05.2021
+#   YEAR_IN_PARENTHESES -> (2021) or (2021_remastered)  [year precision]
+
+# --- Dry run: log only, all libraries, all formats, only scenes with empty date ---
+mutation SetSceneDatesFromFilename_DryRun {
+  sandboxSetSceneDatesFromFilename(
+    input: {
+      dryMode: true
+    }
+  )
+}
+
+# --- Apply: only scenes with empty date, all libraries, all formats ---
+mutation SetSceneDatesFromFilename_Apply {
+  sandboxSetSceneDatesFromFilename(
+    input: {
+      dryMode: false
+    }
+  )
+}
+
+# --- Apply with explicit options: chosen libraries, chosen formats, override existing dates ---
+mutation SetSceneDatesFromFilename_Full {
+  sandboxSetSceneDatesFromFilename(
+    input: {
+      paths: ["L:\\Lib\\MyStudio", "M:\\OtherLibrary"]
+      formats: [YYYY_MM_DD, DD_MM_YYYY, YYYY_DOT_MM_DOT_DD, DD_DOT_MM_DOT_YYYY, YEAR_IN_PARENTHESES]
+      override: true
+      dryMode: false
+    }
+  )
+}

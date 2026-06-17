@@ -26,6 +26,37 @@ func (r *mutationResolver) SandboxOrganizeScenesByStudio(ctx context.Context, in
 	return strconv.Itoa(id), nil
 }
 
+func (r *mutationResolver) SandboxSetSceneDatesFromFilename(ctx context.Context, input SetSceneDatesFromFilenameInput) (string, error) {
+	var opts manager.SetSceneDatesFromFilenameOptions
+
+	for _, p := range input.Paths {
+		if s := strings.TrimSpace(p); s != "" {
+			opts.Paths = append(opts.Paths, s)
+		}
+	}
+	for _, f := range input.Formats {
+		if !f.IsValid() {
+			return "", fmt.Errorf("invalid filename date format %q", f)
+		}
+		opts.Formats = append(opts.Formats, manager.SceneDateFilenameFormat(f))
+	}
+	if input.Override != nil {
+		opts.Override = *input.Override
+	}
+	if input.DryMode != nil {
+		opts.DryMode = *input.DryMode
+	}
+
+	mgr := manager.GetInstance()
+	job := &manager.SetSceneDatesFromFilenameJob{
+		Options:    opts,
+		Repository: mgr.Repository,
+	}
+	id := mgr.JobManager.Add(ctx, "[Sandbox] Set scene dates from filename", job)
+	logger.Infof("sandbox set scene dates from filename: queued job %d", id)
+	return strconv.Itoa(id), nil
+}
+
 func organizeScenesByStudioOptionsFromInput(input OrganizeScenesByStudioInput) (manager.OrganizeScenesByStudioOptions, error) {
 	var out manager.OrganizeScenesByStudioOptions
 	if len(input.StudioDirectories) == 0 {

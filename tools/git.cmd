@@ -3,11 +3,12 @@ chcp 65001 > nul
 setlocal EnableDelayedExpansion
 
 REM git.cmd - pomocnicze polecenia git/build/deploy dla repozytorium stash
-REM Uzycie: git.cmd [1-9|check-remote|show-remote|status-local|commit-local|pull-rebase|verify|build-release|install-stash|backup-stash|help]
+REM Uzycie: git.cmd [0-9|start-stash|check-remote|...|help]
 
 set "STASH_HOME=C:\Users\areks\.stash"
 set "STASH_BIN=%STASH_HOME%\bin"
 set "STASH_BACKUP=%STASH_HOME%\backup"
+set "STASH_RUN=%STASH_BIN%\stash.exe"
 
 cd /d "%~dp0.."
 if errorlevel 1 (
@@ -22,8 +23,10 @@ if not exist ".git" (
 
 for /f "delims=" %%I in ('git branch --show-current 2^>nul') do set "GIT_BRANCH=%%I"
 if not defined GIT_BRANCH set "GIT_BRANCH=develop"
+set "REPO_STASH=%CD%\stash.exe"
 
 if "%~1"=="" goto menu
+if /i "%~1"=="0" goto start_stash
 if /i "%~1"=="1" goto check_remote
 if /i "%~1"=="2" goto show_remote
 if /i "%~1"=="3" goto status_local
@@ -33,6 +36,7 @@ if /i "%~1"=="6" goto verify_rebase
 if /i "%~1"=="7" goto build_release
 if /i "%~1"=="8" goto install_stash
 if /i "%~1"=="9" goto backup_stash
+if /i "%~1"=="start-stash" goto start_stash
 if /i "%~1"=="check-remote" goto check_remote
 if /i "%~1"=="show-remote" goto show_remote
 if /i "%~1"=="status-local" goto status_local
@@ -54,6 +58,7 @@ echo.
 echo === git.cmd - repo: %CD% ===
 echo Galaz: !GIT_BRANCH!
 echo.
+echo  0. Uruchom Stash z !STASH_BIN!
 echo  1. Sprawdz czy na remote sa nowe zmiany
 echo  2. Wyswietl nowe zmiany z remote
 echo  3. Sprawdz lokalne niezatwierdzone zmiany
@@ -68,6 +73,7 @@ echo  help - pomoc
 echo  q    - wyjscie
 echo.
 set /p "CHOICE=Wybierz opcje: "
+if /i "!CHOICE!"=="0" goto start_stash
 if /i "!CHOICE!"=="1" goto check_remote
 if /i "!CHOICE!"=="2" goto show_remote
 if /i "!CHOICE!"=="3" goto status_local
@@ -81,6 +87,20 @@ if /i "!CHOICE!"=="help" goto help
 if /i "!CHOICE!"=="q" exit /b 0
 if "!CHOICE!"=="" exit /b 0
 echo Nieznana opcja: !CHOICE!
+exit /b 1
+
+:start_stash
+echo.
+echo === 0. Uruchamiam Stash ===
+echo Katalog: !STASH_BIN!
+if not exist "!STASH_RUN!" goto start_stash_missing
+start "Stash" /D "!STASH_BIN!" stash.exe
+echo [OK] Stash uruchomiony w nowym oknie.
+exit /b 0
+
+:start_stash_missing
+echo [git.cmd] Brak pliku: !STASH_RUN!
+echo Uruchom najpierw opcje 7 (build) i 8 (kopiowanie).
 exit /b 1
 
 :check_remote
@@ -326,33 +346,33 @@ if errorlevel 1 (
     echo [git.cmd] Build release nie powiodl sie.
     exit /b 1
 )
-if not exist "stash.exe" (
-    echo [git.cmd] Build zakonczony, ale brak pliku stash.exe w katalogu repo.
-    exit /b 1
-)
+if not exist "!REPO_STASH!" goto build_release_missing
 echo.
-echo [OK] Build zakonczony: %CD%\stash.exe
+echo [OK] Build zakonczony: !REPO_STASH!
 exit /b 0
+
+:build_release_missing
+echo [git.cmd] Build zakonczony, ale brak pliku stash.exe w katalogu repo.
+exit /b 1
 
 :install_stash
 echo.
 echo === 8. Kopiowanie stash.exe do !STASH_BIN! ===
-if not exist "stash.exe" (
-    echo [git.cmd] Brak pliku stash.exe w katalogu repo.
-    echo Uruchom najpierw opcje 7 (build release).
-    exit /b 1
-)
-if not exist "!STASH_BIN!" (
-    echo Tworze katalog: !STASH_BIN!
-    mkdir "!STASH_BIN!"
-)
-copy /Y "stash.exe" "!STASH_BIN!\stash.exe"
-if errorlevel 1 (
-    echo [git.cmd] Kopiowanie nie powiodlo sie.
-    exit /b 1
-)
+if not exist "!REPO_STASH!" goto install_stash_missing
+if not exist "!STASH_BIN!\." mkdir "!STASH_BIN!"
+copy /Y "!REPO_STASH!" "!STASH_BIN!\stash.exe"
+if errorlevel 1 goto install_stash_copy_fail
 echo [OK] Skopiowano do !STASH_BIN!\stash.exe
 exit /b 0
+
+:install_stash_missing
+echo [git.cmd] Brak pliku stash.exe w katalogu repo.
+echo Uruchom najpierw opcje 7 (build release).
+exit /b 1
+
+:install_stash_copy_fail
+echo [git.cmd] Kopiowanie nie powiodlo sie.
+exit /b 1
 
 :backup_stash
 echo.
@@ -363,7 +383,7 @@ set "BACKUP_DIR="
 for /f "delims=" %%T in ('powershell -NoProfile -Command "Get-Date -Format yyyy-MM-dd_HHmmss"') do set "BACKUP_TS=%%T"
 set "BACKUP_DIR=!STASH_BACKUP!\!BACKUP_TS!"
 
-if not exist "!STASH_BACKUP!" mkdir "!STASH_BACKUP!"
+if not exist "!STASH_BACKUP!\." mkdir "!STASH_BACKUP!"
 mkdir "!BACKUP_DIR!"
 if errorlevel 1 (
     echo [git.cmd] Nie mozna utworzyc katalogu backup: !BACKUP_DIR!
@@ -373,8 +393,8 @@ if errorlevel 1 (
 echo Katalog backup: !BACKUP_DIR!
 echo.
 
-if exist "stash.exe" (
-    copy /Y "stash.exe" "!BACKUP_DIR!\stash.exe" >nul
+if exist "!REPO_STASH!" (
+    copy /Y "!REPO_STASH!" "!BACKUP_DIR!\stash.exe" >nul
     if errorlevel 1 (
         echo [FAIL] Nie udalo sie skopiowac stash.exe z repo.
         set "BACKUP_OK=0"
@@ -398,11 +418,29 @@ if exist "!STASH_HOME!\config.yml" (
 )
 
 set "DB_COPIED=0"
-call :copy_db_file "!STASH_HOME!\stash-go.sqlite"
-call :copy_db_file "!STASH_HOME!\database\stash-go.sqlite"
+set "DB_NAME=stash-go.sqlite"
+if exist "!STASH_HOME!\config.yml" (
+    for /f "usebackq tokens=2 delims=:" %%D in (`findstr /b /c:"database:" "!STASH_HOME!\config.yml"`) do set "DB_NAME=%%D"
+)
+set "DB_NAME=!DB_NAME: =!"
+if "!DB_NAME!"=="" set "DB_NAME=stash-go.sqlite"
+echo Szukam bazy z config.yml: !DB_NAME!
+
+if "!DB_NAME:~1,1!"==":" (
+    call :copy_db_file "!DB_NAME!"
+) else (
+    call :copy_db_file "!STASH_BIN!\!DB_NAME!"
+    call :copy_db_file "!STASH_HOME!\!DB_NAME!"
+    call :copy_db_file "%CD%\!DB_NAME!"
+    call :copy_db_file "!STASH_HOME!\database\!DB_NAME!"
+    if /i not "!DB_NAME!"=="stash-go.sqlite" (
+        call :copy_db_file "!STASH_HOME!\stash-go.sqlite"
+        call :copy_db_file "!STASH_HOME!\database\stash-go.sqlite"
+    )
+)
 
 if "!DB_COPIED!"=="0" (
-    echo [WARN] Nie znaleziono bazy stash-go.sqlite w !STASH_HOME!
+    echo [WARN] Nie znaleziono bazy !DB_NAME! ^(sprawdz database: w config.yml^).
 )
 
 echo.
@@ -414,6 +452,7 @@ echo [FAIL] Backup zakonczony z bledami.
 exit /b 1
 
 :copy_db_file
+if "!DB_COPIED!"=="1" exit /b 0
 if not exist "%~1" exit /b 0
 for %%F in ("%~1") do set "DB_BASE=%%~nxF"
 copy /Y "%~1" "!BACKUP_DIR!\!DB_BASE!" >nul
@@ -435,12 +474,13 @@ exit /b 0
 echo.
 echo Uzycie:
 echo   git.cmd
-echo   git.cmd 1 .. 9
-echo   git.cmd check-remote ^| show-remote ^| status-local ^| commit-local
+echo   git.cmd 0 .. 9
+echo   git.cmd start-stash ^| check-remote ^| show-remote ^| status-local ^| commit-local
 echo   git.cmd pull-rebase ^| verify ^| build-release ^| install-stash ^| backup-stash
 echo   git.cmd commit-local "Wiadomosc commita"
 echo.
 echo Opcje:
+echo   0  Uruchom Stash z %STASH_BIN%
 echo   1  Sprawdz czy na remote sa nowe commity
 echo   2  Wyswietl commity i statystyke plikow z remote
 echo   3  Sprawdz lokalne niezatwierdzone zmiany

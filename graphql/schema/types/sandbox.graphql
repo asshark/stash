@@ -95,10 +95,54 @@ input OrganizeScenesByStudioInput {
   groupByYear: Boolean
 }
 
+"""Date patterns recognized in scene primary file names."""
+enum SceneFilenameDateFormat {
+  "YYYY-MM-DD (e.g. 2021-05-12)"
+  YYYY_MM_DD
+  "DD-MM-YYYY (e.g. 12-05-2021)"
+  DD_MM_YYYY
+  "YYYY.MM.DD (e.g. 2021.05.12)"
+  YYYY_DOT_MM_DOT_DD
+  "DD.MM.YYYY (e.g. 12.05.2021)"
+  DD_DOT_MM_DOT_YYYY
+  """
+  (YYYY) or (YYYY_any string) — bare year in parentheses (e.g. (2021), (2021_remastered)).
+  Sets the scene date to YYYY with year precision.
+  """
+  YEAR_IN_PARENTHESES
+}
+
+input SetSceneDatesFromFilenameInput {
+  """
+  Library paths to scan. Each entry must lie within a configured stash library.
+  Omitted/empty: all configured libraries (all scenes).
+  """
+  paths: [String!]
+  """
+  Formats to try, in the given order; first match wins.
+  Omitted/empty: all formats, full dates first, year-in-parentheses last.
+  """
+  formats: [SceneFilenameDateFormat!]
+  """
+  false (default): only scenes whose date is empty are updated.
+  true: the extracted date overrides any existing scene date.
+  """
+  override: Boolean
+  """When true, only log what would be set; no database writes."""
+  dryMode: Boolean
+}
+
 extend type Mutation {
   """
   [SANDBOX] Organize primary video files on disk by studio mapping and parent hierarchy.
   Validates that destination roots lie within library paths. Returns the queued job ID.
   """
   sandboxOrganizeScenesByStudio(input: OrganizeScenesByStudioInput!): ID!
+
+  """
+  [SANDBOX] Scan scenes and set the scene date extracted from the primary file name.
+  Runs as a task; logs an info line for every scene whose date is (or would be) updated.
+  Returns the queued job ID.
+  """
+  sandboxSetSceneDatesFromFilename(input: SetSceneDatesFromFilenameInput!): ID!
 }

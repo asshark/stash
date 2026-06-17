@@ -9,6 +9,7 @@ import {
 import { useHistory } from "react-router-dom";
 import { TruncatedText } from "src/components/Shared/TruncatedText";
 import { DeleteFilesDialog } from "src/components/Shared/DeleteFilesDialog";
+import { CopyFileNameButton } from "src/components/Shared/CopyFileNameButton";
 import { RevealInFilesystemButton } from "src/components/Shared/RevealInFilesystemButton";
 import { ReassignFilesDialog } from "src/components/Shared/ReassignFilesDialog";
 import * as GQL from "src/core/generated-graphql";
@@ -80,6 +81,7 @@ const FileInfoPanel: React.FC<IFileInfoPanelProps> = (
           <span className="d-flex align-items-center">
             <TruncatedText text={props.file.path} />
             <RevealInFilesystemButton fileId={props.file.id} />
+            <CopyFileNameButton path={props.file.path} />
           </span>
         </TextField>
         <TextField id="filesize">

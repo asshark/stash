@@ -255,6 +255,12 @@ const fileNameFromPath = (path: string) => {
   return path.replace(/^.*[\\/]/, "");
 };
 
+const fileBaseNameFromPath = (path: string) => {
+  const basename = fileNameFromPath(path);
+  const dotIdx = basename.lastIndexOf(".");
+  return dotIdx > 0 ? basename.slice(0, dotIdx) : basename;
+};
+
 const stringToDate = (dateString: string) => {
   if (!dateString) return null;
 
@@ -542,6 +548,7 @@ const TextUtils = {
   formatTimestampRange,
   timestampToSeconds,
   fileNameFromPath,
+  fileBaseNameFromPath,
   stringToDate,
   stringToFuzzyDate,
   stringToFuzzyDateTime,

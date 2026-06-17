@@ -3,6 +3,7 @@ import { Accordion, Button, Card } from "react-bootstrap";
 import { FormattedMessage, FormattedTime } from "react-intl";
 import { TruncatedText } from "src/components/Shared/TruncatedText";
 import { DeleteFilesDialog } from "src/components/Shared/DeleteFilesDialog";
+import { CopyFileNameButton } from "src/components/Shared/CopyFileNameButton";
 import { RevealInFilesystemButton } from "src/components/Shared/RevealInFilesystemButton";
 import * as GQL from "src/core/generated-graphql";
 import { mutateGallerySetPrimaryFile } from "src/core/StashService";
@@ -46,6 +47,7 @@ const FileInfoPanel: React.FC<IFileInfoPanelProps> = (
               folderId={props.folder?.id}
               fileId={props.file?.id}
             />
+            <CopyFileNameButton path={path} />
           </span>
         </TextField>
         {props.file && (

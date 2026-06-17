@@ -1,0 +1,65 @@
+mutation OrganizeScenesByStudio_ClipsStudiosSet2 {
+  sandboxOrganizeScenesByStudio(
+    input: {
+      studioDirectories: [
+        { studioName: "1 Pass for All Sites",							directoryPath: "U:\\ClipsStudiosSet2\\1 Pass for All Sites" }
+        { studioName: "18videoz", 												directoryPath: "U:\\ClipsStudiosSet2\\18videoz" }
+        { studioName: "AfricanBucks", 										directoryPath: "U:\\ClipsStudiosSet2\\AfricanBucks" }
+        { studioName: "Czech AV", 												directoryPath: "U:\\ClipsStudiosSet2\\Czech AV" }
+        { studioName: "Deluxe Coin", 											directoryPath: "U:\\ClipsStudiosSet2\\Deluxe Coin" }
+        { studioName: "Dorcel", 													directoryPath: "U:\\ClipsStudiosSet2\\Dorcel" }
+        { studioName: "Extreme Movie Pass", 		          directoryPath: "U:\\ClipsStudiosSet2\\Extreme Movie Pass"   }
+        { studioName: "FerroNetwork", 										directoryPath: "U:\\ClipsStudiosSet2\\FerroNetwork" }
+        { studioName: "Jacquie & Michel TV", 							directoryPath: "U:\\ClipsStudiosSet2\\Jacquie & Michel TV" }
+        { studioName: "John Thompson Productions",				directoryPath: "U:\\ClipsStudiosSet2\\John Thompson Productions" }
+        
+        { studioName: "Little Caprice Dreams", 						directoryPath: "U:\\ClipsStudiosSet2\\Little Caprice Dreams", 	excludedChildStudios: ["Little Caprice Dreams Virtual Reality"] }
+        { studioName: "My Dirty Hobby", 									directoryPath: "U:\\ClipsStudiosSet2\\My Dirty Hobby" }
+        { studioName: "No Rest Network", 									directoryPath: "U:\\ClipsStudiosSet2\\No Rest Network" }
+        { studioName: "PornCZ", 													directoryPath: "U:\\ClipsStudiosSet2\\PornCZ" }
+        { studioName: "Private", 													directoryPath: "U:\\ClipsStudiosSet2\\Private" }
+        { studioName: "Penthouse",												directoryPath: "U:\\ClipsStudiosSet2\\Penthouse" }
+        
+        { studioName: "SinDrive", 												directoryPath: "U:\\ClipsStudiosSet2\\SinDrive" }
+        
+        { studioName: "Teen Mega World",				          directoryPath: "U:\\ClipsStudiosSet2\\Teen Mega World", 				excludedChildStudios: ["TmwVRnet"]  }
+        
+        { studioName: "Woodman", 													directoryPath: "U:\\ClipsStudiosSet2\\Woodman" }
+        { studioName: "WTFPass", 													directoryPath: "U:\\ClipsStudiosSet2\\WTFPass" }
+        { studioName: "xes.pl", 													directoryPath: "U:\\ClipsStudiosSet2\\xes.pl" }
+      ]
+      dryMode: false
+      dryRunLogPath: "U:\\ClipsStudiosSet2\\organize_ClipsStudiosSet2.log"
+      groupByYear: true
+      reFormatFileName: true
+      fileNameFormat: "{{.Performers}} - {{.Title}} [{{.StudioPath}}]{{if .Date}} ({{.Date}}){{end}}"
+      filenamePlaceholders: {
+        performers: { genderFilter: FEMALE, separator: ", ", sortBy: NAME }
+        studioPath: { studioJoiner: "_", stripWhitespaceFromStudioNames: true }
+      }
+    }
+  )
+}
+
+mutation OrganizeScenesByStudio_ClipsStudiosSet2 {
+    sandboxOrganizeScenesByStudio(
+      input: {
+        studioDirectories: [
+          { studioName: "OnlyFans (network)",							directoryPath: "u:\\PornHubs\\OnlyFans (network)" }
+          { studioName: "Fansly (network)", 							directoryPath: "u:\\PornHubs\\Fansly (network)" }
+          { studioName: "ManyVids"	, 										directoryPath: "u:\\PornHubs\\ManyVids" }
+          { studioName: "Pornhub", 												directoryPath: "u:\\PornHubs\\Pornhub" }
+          { studioName: "Chaturbate", 										directoryPath: "u:\\PornHubs\\Chaturbate" }
+        ]
+        dryMode: false
+        dryRunLogPath: "U:\\ClipsStudiosSet2\\organize_Pornhubs.log"
+        groupByYear: true
+        reFormatFileName: true
+        fileNameFormat: "{{.Performers}} - {{.Title}} [{{.StudioPath}}]{{if .Date}} ({{.Date}}){{end}}"
+        filenamePlaceholders: {
+          performers: { genderFilter: FEMALE, separator: ", ", sortBy: NAME }
+          studioPath: { studioJoiner: "_", stripWhitespaceFromStudioNames: true }
+        }
+      }
+    )
+  }

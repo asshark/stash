@@ -1,0 +1,82 @@
+mutation OrganizeScenesByStudio_ClipsStudiosSet3 {
+  sandboxOrganizeScenesByStudio(
+    input: {
+      studioDirectories: [
+        { studioName: "Adult Prime", 							directoryPath: "W:\\ClipsStudiosSet3\\Adult Prime"  excludedChildStudios: ["VRTeenrs"]}
+        { studioName: "Adult Time (Network)",     directoryPath: "W:\\ClipsStudiosSet3\\Adult Time (Network)"   }
+        { studioName: "Adult Time Originals",     directoryPath: "W:\\ClipsStudiosSet3\\Adult Time Originals"        }
+        { studioName: "ATKingdom",						    directoryPath: "W:\\ClipsStudiosSet3\\ATKingdom"        }
+        
+        { studioName: "Babes (Network)", 					directoryPath: "W:\\ClipsStudiosSet3\\Babes (Network)" }
+        { studioName: "BangBros", 								directoryPath: "W:\\ClipsStudiosSet3\\BangBros" }
+        { studioName: "Bang! Originals",					directoryPath: "W:\\ClipsStudiosSet3\\Bang! Originals" }
+        { studioName: "Blowpass (Network)",				directoryPath: "W:\\ClipsStudiosSet3\\Blowpass (Network)" }
+        
+        { studioName: "Brazzers", 								directoryPath: "W:\\ClipsStudiosSet3\\Brazzers" }
+        { studioName: "Class Media",							directoryPath: "W:\\ClipsStudiosSet3\\Class Media" }
+        
+        { studioName: "Devil's Film (Network)",   directoryPath: "W:\\ClipsStudiosSet3\\Devil's Film (Network)"        }
+        { studioName: "Deviante",   							directoryPath: "W:\\ClipsStudiosSet3\\Deviante"        }
+        
+        { studioName: "Digital Playground",       directoryPath: "W:\\ClipsStudiosSet3\\Digital Playground"        }
+        { studioName: "Dogfart Network",       		directoryPath: "W:\\ClipsStudiosSet3\\Dogfart Network"        }
+        { studioName: "Evil Angel", 							directoryPath: "W:\\ClipsStudiosSet3\\Evil Angel" }
+        { studioName: "Fakehub", 									directoryPath: "W:\\ClipsStudiosSet3\\Fakehub" }
+        { studioName: "Fantasy Massage (Network)",directoryPath: "W:\\ClipsStudiosSet3\\Fantasy Massage (Network)"        }
+        { studioName: "Fuck You Cash", 						directoryPath: "W:\\ClipsStudiosSet3\\Fuck You Cash" }
+        { studioName: "Full Porn Network",        directoryPath: "W:\\ClipsStudiosSet3\\Full Porn Network"        }
+        { studioName: "Hoby Buchanon",        		directoryPath: "W:\\ClipsStudiosSet3\\Hoby Buchanon"        }
+				{ studioName: "Hussie Pass",	        		directoryPath: "W:\\ClipsStudiosSet3\\Hussie Pass"        }
+        
+        { studioName: "It's POV", 								directoryPath: "W:\\ClipsStudiosSet3\\It's POV" }
+        { studioName: "Jules Jordan (Network)",   directoryPath: "W:\\ClipsStudiosSet3\\Jules Jordan (Network)"     }
+        { studioName: "LetsDoeIt", 								directoryPath: "W:\\ClipsStudiosSet3\\LetsDoeIt" }
+        { studioName: "Lethal Pass", 							directoryPath: "W:\\ClipsStudiosSet3\\Lethal Pass" }
+        
+        { studioName: "Life Selector", 						directoryPath: "W:\\ClipsStudiosSet3\\Life Selector" }
+        { studioName: "Love Her Films", 					directoryPath: "W:\\ClipsStudiosSet3\\Love Her Films" }
+        
+        { studioName: "Malibu Media", 						directoryPath: "W:\\ClipsStudiosSet3\\Malibu Media" }
+        
+        { studioName: "MetArt Network", 					directoryPath: "W:\\ClipsStudiosSet3\\MetArt Network" }
+        { studioName: "Mile High Media",          directoryPath: "W:\\ClipsStudiosSet3\\Mile High Media"        }
+        { studioName: "Mofos", 										directoryPath: "W:\\ClipsStudiosSet3\\Mofos" }
+        { studioName: "Naughty America (Network)",directoryPath: "W:\\ClipsStudiosSet3\\Naughty America (Network)"        }
+        { studioName: "New Sensations", 					directoryPath: "W:\\ClipsStudiosSet3\\New Sensations" }
+        { studioName: "NF Media",				 					directoryPath: "W:\\ClipsStudiosSet3\\NF Media" }
+
+        { studioName: "Nubile Films", 						directoryPath: "W:\\ClipsStudiosSet3\\Nubile Films" }
+        { studioName: "Nubiles Porn (Network)",   directoryPath: "W:\\ClipsStudiosSet3\\Nubiles Porn (Network)"        }
+        { studioName: "Perfect Gonzo", 						directoryPath: "W:\\ClipsStudiosSet3\\Perfect Gonzo" }
+        { studioName: "Premium Bukkake", 					directoryPath: "W:\\ClipsStudiosSet3\\Premium Bukkake" }
+        
+        { studioName: "Puffy Network", 						directoryPath: "W:\\ClipsStudiosSet3\\Puffy Network" }
+        { studioName: "Pure Pass",		 						directoryPath: "W:\\ClipsStudiosSet3\\Pure Pass" }
+        
+        { studioName: "Reality Kings", 						directoryPath: "W:\\ClipsStudiosSet3\\Reality Kings" }
+        { studioName: "Sexy Hub", 								directoryPath: "W:\\ClipsStudiosSet3\\Sexy Hub" }
+        { studioName: "See Him Network", 					directoryPath: "W:\\ClipsStudiosSet3\\See Him Network" }
+        { studioName: "Spizoo",					 					directoryPath: "W:\\ClipsStudiosSet3\\Spizoo" }
+        { studioName: "Sticky Dollars",	 					directoryPath: "W:\\ClipsStudiosSet3\\Sticky Dollars" }
+				
+        { studioName: "Tainster", 								directoryPath: "W:\\ClipsStudiosSet3\\Tainster" }
+        { studioName: "TeamSkeet (Network)",      directoryPath: "W:\\ClipsStudiosSet3\\TeamSkeet (Network)"        }
+        { studioName: "Twistys", 									directoryPath: "W:\\ClipsStudiosSet3\\Twistys" }
+        { studioName: "XEmpire", 									directoryPath: "W:\\ClipsStudiosSet3\\XEmpire" }
+        
+        { studioName: "VIP 4K", 									directoryPath: "W:\\ClipsStudiosSet3\\VIP 4K" }
+        { studioName: "Vixen Media Group",        directoryPath: "W:\\ClipsStudiosSet3\\Vixen Media Group"        }
+        { studioName: "Wow (Network)", 						directoryPath: "W:\\ClipsStudiosSet3\\Wow (Network)" }
+      ]
+      dryMode: false
+      dryRunLogPath: "W:\\ClipsStudiosSet3\\organize_ClipsStudiosSet3.log"
+      groupByYear: true
+      reFormatFileName: true
+      fileNameFormat: "{{.Performers}} - {{.Title}} [{{.StudioPath}}]{{if .Date}} ({{.Date}}){{end}}"
+      filenamePlaceholders: {
+        performers: { genderFilter: FEMALE, separator: ", ", sortBy: NAME }
+        studioPath: { studioJoiner: "_", stripWhitespaceFromStudioNames: true }
+      }
+    }
+  )
+}
