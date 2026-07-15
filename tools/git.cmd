@@ -70,24 +70,34 @@ echo  8. Skopiuj stash.exe do !STASH_BIN!
 echo  9. Backup stash.exe, bazy i config do !STASH_BACKUP!
 echo.
 echo  help - pomoc
-echo  q    - wyjscie
+echo  q lub Enter - wyjscie
 echo.
+set "CHOICE="
 set /p "CHOICE=Wybierz opcje: "
-if /i "!CHOICE!"=="0" goto start_stash
-if /i "!CHOICE!"=="1" goto check_remote
-if /i "!CHOICE!"=="2" goto show_remote
-if /i "!CHOICE!"=="3" goto status_local
-if /i "!CHOICE!"=="4" goto commit_local
-if /i "!CHOICE!"=="5" goto pull_rebase
-if /i "!CHOICE!"=="6" goto verify_rebase
-if /i "!CHOICE!"=="7" goto build_release
-if /i "!CHOICE!"=="8" goto install_stash
-if /i "!CHOICE!"=="9" goto backup_stash
-if /i "!CHOICE!"=="help" goto help
+if not defined CHOICE exit /b 0
+set "CHOICE=!CHOICE: =!"
 if /i "!CHOICE!"=="q" exit /b 0
 if "!CHOICE!"=="" exit /b 0
-echo Nieznana opcja: !CHOICE!
-exit /b 1
+set "ACTION="
+if /i "!CHOICE!"=="0" set "ACTION=start_stash"
+if /i "!CHOICE!"=="1" set "ACTION=check_remote"
+if /i "!CHOICE!"=="2" set "ACTION=show_remote"
+if /i "!CHOICE!"=="3" set "ACTION=status_local"
+if /i "!CHOICE!"=="4" set "ACTION=commit_local"
+if /i "!CHOICE!"=="5" set "ACTION=pull_rebase"
+if /i "!CHOICE!"=="6" set "ACTION=verify_rebase"
+if /i "!CHOICE!"=="7" set "ACTION=build_release"
+if /i "!CHOICE!"=="8" set "ACTION=install_stash"
+if /i "!CHOICE!"=="9" set "ACTION=backup_stash"
+if /i "!CHOICE!"=="help" set "ACTION=help"
+if not defined ACTION (
+    echo Nieznana opcja: !CHOICE!
+    goto menu
+)
+call :!ACTION!
+echo.
+echo --- Gotowe. Powrot do menu ---
+goto menu
 
 :start_stash
 echo.
@@ -112,6 +122,14 @@ if errorlevel 1 (
     echo [git.cmd] git fetch nie powiodl sie.
     exit /b 1
 )
+echo.
+set "LOCAL_VER=nieznana"
+set "REMOTE_VER=nieznana"
+for /f "delims=" %%V in ('git describe --tags --exclude latest_develop HEAD 2^>nul') do set "LOCAL_VER=%%V"
+for /f "delims=" %%V in ('git describe --tags --exclude latest_develop origin/!GIT_BRANCH! 2^>nul') do set "REMOTE_VER=%%V"
+echo Wersja aplikacji:
+echo   lokalna (HEAD):            !LOCAL_VER!
+echo   remote (origin/!GIT_BRANCH!): !REMOTE_VER!
 echo.
 git status -sb
 echo.
