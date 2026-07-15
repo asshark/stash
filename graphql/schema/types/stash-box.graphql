@@ -52,6 +52,7 @@ type StashBoxStudioScene {
   date: String
   urls: [String!]!
   performers: [String!]!
+  image_url: String
 }
 
 type StashBoxStudioScenesResult {
@@ -74,6 +75,9 @@ type StashBoxPerformerScene {
   date: String
   urls: [String!]!
   performers: [String!]!
+  studio: String
+  parent_studio: String
+  image_url: String
 }
 
 type StashBoxPerformerScenesResult {

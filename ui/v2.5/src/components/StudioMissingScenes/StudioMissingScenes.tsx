@@ -1,28 +1,16 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { gql, useLazyQuery } from "@apollo/client";
-import { Button, Card, Form, Table } from "react-bootstrap";
+import { Button, ButtonGroup, Form } from "react-bootstrap";
 import { FormattedMessage, useIntl } from "react-intl";
+import { Link } from "react-router-dom";
 import * as GQL from "src/core/generated-graphql";
-import {
-  useFindStudio,
-  useFindStudios,
-  useConfiguration,
-} from "src/core/StashService";
-import { ListFilterModel } from "src/models/list-filter/filter";
-import { StashIDCriterion } from "src/models/list-filter/criteria/stash-ids";
-import { StudioSelect } from "src/components/Studios/StudioSelect";
+import { useFindStudio, useConfiguration } from "src/core/StashService";
+import { StudioSelect, Studio as SelectStudio } from "src/components/Studios/StudioSelect";
 import { ErrorMessage } from "src/components/Shared/ErrorMessage";
 import { LoadingIndicator } from "src/components/Shared/LoadingIndicator";
-import { ExternalLink } from "src/components/Shared/ExternalLink";
+import { RemoteSceneCardGrid } from "src/components/Shared/RemoteSceneCardGrid";
+import { RemoteScene } from "src/components/Shared/RemoteSceneCard";
 import { getStashboxBase, stashboxDisplayName } from "src/utils/stashbox";
-
-type RemoteScene = {
-  id: string;
-  title?: string | null;
-  date?: string | null;
-  urls: string[];
-  performers: string[];
-};
 
 type StudioScenesResult = {
   stashBoxStudioScenes: {
@@ -49,35 +37,56 @@ const STASHBOX_STUDIO_SCENES = gql`
         date
         urls
         performers
+        image_url
       }
     }
   }
 `;
 
-export const StudioMissingScenes: React.FC = () => {
+type SortMode = "date" | "title" | "performers";
+
+interface IProps {
+  preselectedStudioId?: string;
+  onMissingCountChange?: (count: number) => void;
+}
+
+export const StudioMissingScenes: React.FC<IProps> = ({
+  preselectedStudioId,
+  onMissingCountChange,
+}) => {
   const intl = useIntl();
   const config = useConfiguration();
 
-  const [selectedStudio, setSelectedStudio] = useState<GQL.Studio | null>(null);
-  const [selectedStashID, setSelectedStashID] = useState<GQL.StashId | null>(
-    null
-  );
+  const [selectedStudio, setSelectedStudio] = useState<SelectStudio | null>(null);
+  const [selectedStashID, setSelectedStashID] = useState<GQL.StashId | null>(null);
+  const [searchFilter, setSearchFilter] = useState("");
+  const [sortMode, setSortMode] = useState<SortMode>("date");
 
   const { data: studioData } = useFindStudio(selectedStudio?.id ?? "");
   const stashIDs = studioData?.findStudio?.stash_ids ?? [];
+
+  const { data: preselectedData } = useFindStudio(preselectedStudioId ?? "");
+  useEffect(() => {
+    const s = preselectedData?.findStudio;
+    if (preselectedStudioId && s && !selectedStudio) {
+      setSelectedStudio({
+        id: s.id,
+        name: s.name,
+        aliases: s.aliases,
+        image_path: s.image_path,
+      });
+    }
+  }, [preselectedStudioId, preselectedData, selectedStudio]);
 
   useEffect(() => {
     if (!stashIDs.length) {
       setSelectedStashID(null);
       return;
     }
-
     if (
       !selectedStashID ||
       !stashIDs.some(
-        (s) =>
-          s.stash_id === selectedStashID.stash_id &&
-          s.endpoint === selectedStashID.endpoint
+        (s) => s.stash_id === selectedStashID.stash_id && s.endpoint === selectedStashID.endpoint
       )
     ) {
       setSelectedStashID(stashIDs[0]);
@@ -90,17 +99,11 @@ export const StudioMissingScenes: React.FC = () => {
         scenes: Array<{
           id: string;
           urls: string[];
-          stash_ids: Array<{
-            endpoint: string;
-            stash_id: string;
-          }>;
+          stash_ids: Array<{ endpoint: string; stash_id: string }>;
         }>;
       };
     },
-    {
-      filter: GQL.FindFilterType;
-      scene_filter: GQL.SceneFilterType;
-    }
+    { filter: GQL.FindFilterType; scene_filter: GQL.SceneFilterType }
   >(gql`
     query StudioMissingScenesLocal($filter: FindFilterType, $scene_filter: SceneFilterType) {
       findScenes(filter: $filter, scene_filter: $scene_filter) {
@@ -115,13 +118,13 @@ export const StudioMissingScenes: React.FC = () => {
       }
     }
   `);
+
   const [fetchRemoteScenes, remoteScenesState] = useLazyQuery<
     StudioScenesResult,
     StudioScenesVars
   >(STASHBOX_STUDIO_SCENES, { fetchPolicy: "network-only" });
 
   const [localCount, setLocalCount] = useState(0);
-  const [localMissingStashCount, setLocalMissingStashCount] = useState(0);
   const [remoteCount, setRemoteCount] = useState(0);
   const [missingScenes, setMissingScenes] = useState<RemoteScene[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -131,54 +134,21 @@ export const StudioMissingScenes: React.FC = () => {
   const stashBoxLabel = useCallback(
     (endpoint: string) => {
       const index = stashBoxes.findIndex((box) => box.endpoint === endpoint);
-      if (index === -1) {
-        return endpoint;
-      }
+      if (index === -1) return endpoint;
       return stashboxDisplayName(stashBoxes[index].name, index);
     },
     [stashBoxes]
   );
 
-  const studioFilter = useMemo(() => {
-    const filter = new ListFilterModel(GQL.FilterMode.Studios);
-    filter.currentPage = 1;
-    filter.itemsPerPage = 40;
-    filter.sortBy = "name";
-    filter.sortDirection = GQL.SortDirectionEnum.Asc;
-    filter.criteria = [];
-
-    const stashIDCriterion = new StashIDCriterion();
-    stashIDCriterion.modifier = GQL.CriterionModifier.NotNull;
-    filter.criteria.push(stashIDCriterion);
-
-    return filter;
-  }, []);
-
-  const studiosQuery = useFindStudios(studioFilter);
-  useEffect(() => {
-    if (studiosQuery.data?.findStudios.studios?.length) {
-      return;
-    }
-    // Touching searchTerm triggers a refetch with the applied criteria.
-    studioFilter.searchTerm = "";
-    studiosQuery.refetch({
-      filter: studioFilter.makeFindFilter(),
-      studio_filter: studioFilter.makeFilter(),
-    });
-  }, [studioFilter, studiosQuery]);
-
-  const onSelectStudio = (items: GQL.Studio[]) => {
+  const onSelectStudio = (items: SelectStudio[]) => {
     setSelectedStudio(items[0] ?? null);
     setLocalCount(0);
     setRemoteCount(0);
     setMissingScenes([]);
-    setLocalMissingStashCount(0);
   };
 
   const generateReport = useCallback(async () => {
-    if (!selectedStudio || !selectedStashID) {
-      return;
-    }
+    if (!selectedStudio || !selectedStashID) return;
 
     setError(null);
     setMissingScenes([]);
@@ -189,9 +159,7 @@ export const StudioMissingScenes: React.FC = () => {
       const [localResult, remoteResult] = await Promise.all([
         fetchLocalScenes({
           variables: {
-            filter: {
-              per_page: -1,
-            },
+            filter: { per_page: -1 },
             scene_filter: {
               studios: {
                 modifier: GQL.CriterionModifier.Includes,
@@ -210,21 +178,11 @@ export const StudioMissingScenes: React.FC = () => {
         }),
       ]);
 
-      if (localResult.errors?.length) {
-        throw new Error(localResult.errors[0].message);
-      }
-      if (remoteResult.errors?.length) {
-        throw new Error(remoteResult.errors[0].message);
-      }
+      if (localResult.errors?.length) throw new Error(localResult.errors[0].message);
+      if (remoteResult.errors?.length) throw new Error(remoteResult.errors[0].message);
 
       const localScenes = localResult.data?.findScenes.scenes ?? [];
       const remoteScenes = remoteResult.data?.stashBoxStudioScenes.scenes ?? [];
-
-      const localMissingStash = localScenes.filter((scene) => {
-        return !scene.stash_ids.some(
-          (id) => id.endpoint === selectedStashID.endpoint
-        );
-      });
 
       const localStashIDs = new Set(
         localScenes.flatMap((scene) =>
@@ -240,20 +198,13 @@ export const StudioMissingScenes: React.FC = () => {
           .filter((url) => url.length > 0)
       );
 
-      const missing = remoteScenes.filter(
-        (scene) => {
-          if (localStashIDs.has(scene.id)) {
-            return false;
-          }
-          const remoteUrls = (scene.urls ?? [])
-            .map((url) => url.trim())
-            .filter((url) => url.length > 0);
-          return !remoteUrls.some((url) => localURLs.has(url));
-        }
-      );
+      const missing = remoteScenes.filter((scene) => {
+        if (localStashIDs.has(scene.id)) return false;
+        const remoteUrls = (scene.urls ?? []).map((url) => url.trim()).filter((url) => url.length > 0);
+        return !remoteUrls.some((url) => localURLs.has(url));
+      });
 
       setLocalCount(localScenes.length);
-      setLocalMissingStashCount(localMissingStash.length);
       setRemoteCount(remoteScenes.length);
       setMissingScenes(missing);
     } catch (err) {
@@ -261,236 +212,206 @@ export const StudioMissingScenes: React.FC = () => {
     }
   }, [fetchLocalScenes, fetchRemoteScenes, selectedStudio, selectedStashID]);
 
+  useEffect(() => {
+    if (
+      preselectedStudioId &&
+      selectedStudio &&
+      selectedStashID &&
+      localCount === 0 &&
+      remoteCount === 0 &&
+      missingScenes.length === 0 &&
+      !error
+    ) {
+      generateReport();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preselectedStudioId, selectedStudio, selectedStashID]);
+
+  useEffect(() => {
+    const isLoading = localScenesState.loading || remoteScenesState.loading;
+    if (!isLoading && (localCount > 0 || remoteCount > 0)) {
+      onMissingCountChange?.(missingScenes.length);
+    }
+  }, [missingScenes.length, localCount, remoteCount, localScenesState.loading, remoteScenesState.loading, onMissingCountChange]);
+
   const isLoading = localScenesState.loading || remoteScenesState.loading;
-  const combinedError =
-    error ??
-    localScenesState.error?.message ??
-    remoteScenesState.error?.message;
-  const stashboxBase = selectedStashID?.endpoint
-    ? getStashboxBase(selectedStashID.endpoint)
-    : undefined;
-  const unknownYearLabel = intl.formatMessage({ id: "unknown" });
-  const groupedMissingScenes = useMemo(() => {
-    const groups = new Map<string, RemoteScene[]>();
+  const combinedError = error ?? localScenesState.error?.message ?? remoteScenesState.error?.message;
+  const stashboxBase = selectedStashID?.endpoint ? getStashboxBase(selectedStashID.endpoint) : undefined;
 
-    missingScenes.forEach((scene) => {
-      const year = scene.date?.slice(0, 4);
-      const yearLabel =
-        year && /^\d{4}$/.test(year) ? year : unknownYearLabel;
-      const entry = groups.get(yearLabel);
-      if (entry) {
-        entry.push(scene);
-      } else {
-        groups.set(yearLabel, [scene]);
-      }
+  const filteredScenes = useMemo(() => {
+    if (!searchFilter.trim()) return missingScenes;
+    const lower = searchFilter.toLowerCase();
+    return missingScenes.filter((scene) => {
+      if (scene.title?.toLowerCase().includes(lower)) return true;
+      return scene.performers.some((p) => p.toLowerCase().includes(lower));
     });
+  }, [missingScenes, searchFilter]);
 
-    const entries = Array.from(groups.entries());
-    entries.sort((a, b) => {
-      const aYear = a[0] === unknownYearLabel ? -1 : parseInt(a[0], 10);
-      const bYear = b[0] === unknownYearLabel ? -1 : parseInt(b[0], 10);
-      if (aYear === bYear) {
-        return 0;
-      }
-      if (aYear === -1) {
-        return 1;
-      }
-      if (bYear === -1) {
-        return -1;
-      }
-      return bYear - aYear;
-    });
-    return entries;
-  }, [missingScenes, unknownYearLabel]);
+  const sortedScenes = useMemo(() => {
+    const scenes = [...filteredScenes];
+    if (sortMode === "title") {
+      scenes.sort((a, b) => (a.title ?? "").localeCompare(b.title ?? ""));
+    } else if (sortMode === "performers") {
+      scenes.sort((a, b) => {
+        const pa = a.performers[0] ?? "";
+        const pb = b.performers[0] ?? "";
+        return pa.localeCompare(pb);
+      });
+    } else {
+      scenes.sort((a, b) => {
+        const da = a.date ?? "";
+        const db = b.date ?? "";
+        return db.localeCompare(da);
+      });
+    }
+    return scenes;
+  }, [filteredScenes, sortMode]);
+
+  const hasReport = !isLoading && (localCount > 0 || remoteCount > 0);
 
   return (
     <div className="StudioMissingScenes">
-      <Card>
-        <Card.Header>
-          <FormattedMessage id="studio_missing_scenes.title" />
-        </Card.Header>
-        <Card.Body>
-          <Form>
-            <Form.Group>
-              <Form.Label>
-                <FormattedMessage id="studio_missing_scenes.select_studio" />
-              </Form.Label>
-              <StudioSelect
-                values={selectedStudio ? [selectedStudio] : []}
-                onSelect={onSelectStudio}
-                isMulti={false}
-                creatable={false}
-                closeMenuOnSelect
-                noSelectionString={intl.formatMessage({
-                  id: "studio_missing_scenes.select_studio_placeholder",
-                })}
-                filter={studioFilter}
-              />
-            </Form.Group>
-            <Form.Group className="mt-3">
-              <Form.Label>
-                <FormattedMessage id="studio_missing_scenes.select_stash_id" />
-              </Form.Label>
-              <Form.Control
-                as="select"
-                value={
-                  selectedStashID
-                    ? `${selectedStashID.endpoint}|${selectedStashID.stash_id}`
-                    : ""
-                }
-                onChange={(event) => {
-                  const [endpoint, stashIDValue] =
-                    event.target.value.split("|");
-                  const stashID = stashIDs.find(
-                    (id) =>
-                      id.endpoint === endpoint && id.stash_id === stashIDValue
-                  );
-                  setSelectedStashID(stashID ?? null);
-                }}
-                disabled={!stashIDs.length}
+      {!preselectedStudioId && (
+        <div className="mb-3">
+          <Form.Group className="mb-2">
+            <Form.Label>
+              <FormattedMessage id="studio_missing_scenes.select_studio" />
+            </Form.Label>
+            <StudioSelect
+              values={selectedStudio ? [selectedStudio] : []}
+              onSelect={onSelectStudio}
+              isMulti={false}
+              creatable={false}
+              noSelectionString={intl.formatMessage({
+                id: "studio_missing_scenes.select_studio_placeholder",
+              })}
+            />
+          </Form.Group>
+        </div>
+      )}
+
+      <div className="mb-3">
+        <Form.Group>
+          <Form.Label>
+            <FormattedMessage id="studio_missing_scenes.select_stash_id" />
+          </Form.Label>
+          <Form.Control
+            as="select"
+            value={
+              selectedStashID
+                ? `${selectedStashID.endpoint}|${selectedStashID.stash_id}`
+                : ""
+            }
+            onChange={(event) => {
+              const [endpoint, stashIDValue] = event.target.value.split("|");
+              const stashID = stashIDs.find(
+                (id) => id.endpoint === endpoint && id.stash_id === stashIDValue
+              );
+              setSelectedStashID(stashID ?? null);
+            }}
+            disabled={!stashIDs.length}
+          >
+            {!stashIDs.length && (
+              <option value="">
+                {intl.formatMessage({ id: "studio_missing_scenes.no_stash_ids" })}
+              </option>
+            )}
+            {stashIDs.map((id) => (
+              <option
+                key={`${id.endpoint}-${id.stash_id}`}
+                value={`${id.endpoint}|${id.stash_id}`}
               >
-                {!stashIDs.length && (
-                  <option value="">
-                    {intl.formatMessage({
-                      id: "studio_missing_scenes.no_stash_ids",
-                    })}
-                  </option>
-                )}
-                {stashIDs.map((id) => (
-                  <option
-                    key={`${id.endpoint}-${id.stash_id}`}
-                    value={`${id.endpoint}|${id.stash_id}`}
-                  >
-                    {id.stash_id} - {stashBoxLabel(id.endpoint)}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-            <div className="mt-3">
-              <Button
-                onClick={generateReport}
-                disabled={!selectedStudio || !selectedStashID || isLoading}
-              >
-                <FormattedMessage id="studio_missing_scenes.generate_report" />
-              </Button>
-            </div>
-          </Form>
-        </Card.Body>
-      </Card>
+                {id.stash_id} - {stashBoxLabel(id.endpoint)}
+              </option>
+            ))}
+          </Form.Control>
+        </Form.Group>
+      </div>
+
+      {!preselectedStudioId && (
+        <div className="mb-3">
+          <Button
+            onClick={generateReport}
+            disabled={!selectedStudio || !selectedStashID || isLoading}
+          >
+            <FormattedMessage id="studio_missing_scenes.generate_report" />
+          </Button>
+        </div>
+      )}
 
       {isLoading && <LoadingIndicator />}
-
       {combinedError && <ErrorMessage error={combinedError} />}
 
-      {!isLoading && (localCount > 0 || remoteCount > 0) && (
-        <Card className="mt-3">
-          <Card.Header>
-            <FormattedMessage id="studio_missing_scenes.report_title" />
-          </Card.Header>
-          <Card.Body>
-            <div className="mb-3">
-              <strong>
-                <FormattedMessage id="studio_missing_scenes.report_total_local" />
-              </strong>{" "}
-              {localCount}
-              <br />
-              <strong>
-                <FormattedMessage id="studio_missing_scenes.report_local_missing_stash_id" />
-              </strong>{" "}
-              {localMissingStashCount}
-              <br />
-              <strong>
-                <FormattedMessage id="studio_missing_scenes.report_total_remote" />
-              </strong>{" "}
+      {hasReport && (
+        <div>
+          <div className="mb-2 d-flex align-items-center flex-wrap gap-2">
+            <span>
+              <FormattedMessage id="studio_missing_scenes.report_total_local" />{" "}
+              {selectedStudio ? (
+                <Link to={`/studios/${selectedStudio.id}/scenes`}>
+                  {localCount}
+                </Link>
+              ) : (
+                localCount
+              )}
+              {" · "}
+              <FormattedMessage id="studio_missing_scenes.report_total_remote" />{" "}
               {remoteCount}
-              <br />
-              <strong>
-                <FormattedMessage id="studio_missing_scenes.report_missing" />
-              </strong>{" "}
-              {missingScenes.length}
-            </div>
+              {" · "}
+              <FormattedMessage id="studio_missing_scenes.report_missing" />{" "}
+              {sortedScenes.length}
+              {searchFilter && ` / ${missingScenes.length}`}
+            </span>
+          </div>
 
-            {missingScenes.length === 0 ? (
-              <FormattedMessage id="studio_missing_scenes.report_empty" />
-            ) : (
-              groupedMissingScenes.map(([year, scenes]) => (
-                <div key={year} className="mb-4">
-                  <div className="mb-2">
-                    <strong>{year}</strong> ({scenes.length})
-                  </div>
-                  <Table
-                    striped
-                    bordered
-                    hover
-                    responsive
-                    className="StudioMissingScenes-table"
+          {missingScenes.length > 0 && (
+            <div className="row mb-3">
+              <div className="col-md-3 col-lg-2">
+                <Form.Control
+                  type="search"
+                  placeholder={intl.formatMessage({
+                    id: "missing_scenes.search_placeholder",
+                  })}
+                  value={searchFilter}
+                  onChange={(e) => setSearchFilter(e.target.value)}
+                />
+              </div>
+              <div className="col-auto d-flex align-items-center">
+                <ButtonGroup size="sm">
+                  <Button
+                    variant={sortMode === "date" ? "primary" : "outline-secondary"}
+                    onClick={() => setSortMode("date")}
                   >
-                    <thead>
-                      <tr>
-                        <th>
-                          <FormattedMessage id="stash_id" />
-                        </th>
-                        <th>
-                          <FormattedMessage id="performers" />
-                        </th>
-                        <th>
-                          <FormattedMessage id="title" />
-                        </th>
-                        <th>
-                          <FormattedMessage id="date" />
-                        </th>
-                        <th>
-                          <FormattedMessage id="url" />
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {scenes.map((scene) => {
-                        const url =
-                          scene.urls?.[0] ??
-                          (stashboxBase
-                            ? `${stashboxBase}scenes/${scene.id}`
-                            : "");
-                        const performers = scene.performers?.join(", ") ?? "";
-                        return (
-                          <tr key={scene.id} className="StudioMissingScenes-row">
-                            <td className="StudioMissingScenes-stash-id">
-                              {stashboxBase ? (
-                                <ExternalLink
-                                  href={`${stashboxBase}scenes/${scene.id}`}
-                                >
-                                  {scene.id}
-                                </ExternalLink>
-                              ) : (
-                                scene.id
-                              )}
-                            </td>
-                            <td className="StudioMissingScenes-performers">
-                              {performers}
-                            </td>
-                            <td className="StudioMissingScenes-title">
-                              {scene.title}
-                            </td>
-                            <td className="StudioMissingScenes-date">
-                              {scene.date}
-                            </td>
-                            <td>
-                              {url ? (
-                                <ExternalLink href={url}>{url}</ExternalLink>
-                              ) : (
-                                ""
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </Table>
-                </div>
-              ))
-            )}
-          </Card.Body>
-        </Card>
+                    <FormattedMessage id="missing_scenes.sort_by_date" />
+                  </Button>
+                  <Button
+                    variant={sortMode === "title" ? "primary" : "outline-secondary"}
+                    onClick={() => setSortMode("title")}
+                  >
+                    <FormattedMessage id="missing_scenes.sort_by_title" />
+                  </Button>
+                  <Button
+                    variant={sortMode === "performers" ? "primary" : "outline-secondary"}
+                    onClick={() => setSortMode("performers")}
+                  >
+                    <FormattedMessage id="missing_scenes.sort_by_performers" />
+                  </Button>
+                </ButtonGroup>
+              </div>
+            </div>
+          )}
+
+          {missingScenes.length === 0 ? (
+            <FormattedMessage id="studio_missing_scenes.report_empty" />
+          ) : sortedScenes.length === 0 ? (
+            <FormattedMessage id="missing_scenes.no_results" />
+          ) : (
+            <RemoteSceneCardGrid
+              scenes={sortedScenes}
+              stashboxBase={stashboxBase}
+            />
+          )}
+        </div>
       )}
     </div>
   );

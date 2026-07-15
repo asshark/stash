@@ -52,12 +52,19 @@ func (r *queryResolver) StashBoxStudioScenes(ctx context.Context, input StashBox
 			performers = append(performers, name)
 		}
 
+		var imageURL *string
+		if len(scene.Images) > 0 && scene.Images[0] != nil {
+			url := scene.Images[0].URL
+			imageURL = &url
+		}
+
 		result.Scenes = append(result.Scenes, &StashBoxStudioScene{
 			ID:         scene.ID,
 			Title:      scene.Title,
 			Date:       scene.Date,
 			Urls:       urls,
 			Performers: performers,
+			ImageURL:   imageURL,
 		})
 	}
 
@@ -111,12 +118,32 @@ func (r *queryResolver) StashBoxPerformerScenes(ctx context.Context, input Stash
 			performers = append(performers, name)
 		}
 
+		var studio *string
+		var parentStudio *string
+		if scene.Studio != nil {
+			name := scene.Studio.Name
+			studio = &name
+			if scene.Studio.Parent != nil {
+				parentName := scene.Studio.Parent.Name
+				parentStudio = &parentName
+			}
+		}
+
+		var imageURL *string
+		if len(scene.Images) > 0 && scene.Images[0] != nil {
+			url := scene.Images[0].URL
+			imageURL = &url
+		}
+
 		result.Scenes = append(result.Scenes, &StashBoxPerformerScene{
-			ID:         scene.ID,
-			Title:      scene.Title,
-			Date:       scene.Date,
-			Urls:       urls,
-			Performers: performers,
+			ID:           scene.ID,
+			Title:        scene.Title,
+			Date:         scene.Date,
+			Urls:         urls,
+			Performers:   performers,
+			Studio:       studio,
+			ParentStudio: parentStudio,
+			ImageURL:     imageURL,
 		})
 	}
 

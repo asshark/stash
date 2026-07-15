@@ -62,6 +62,40 @@ const stashBoxQueryScenesByStudioID = `query QueryScenes($input: SceneQueryInput
         }
         as
       }
+      images {
+        url
+      }
+    }
+  }
+}`
+
+const stashBoxQueryScenesByPerformerID = `query QueryScenes($input: SceneQueryInput!) {
+  queryScenes(input: $input) {
+    count
+    scenes {
+      id
+      title
+      date
+      urls {
+        url
+      }
+      performers {
+        performer {
+          id
+          name
+          gender
+        }
+        as
+      }
+      studio {
+        name
+        parent {
+          name
+        }
+      }
+      images {
+        url
+      }
     }
   }
 }`
@@ -142,7 +176,7 @@ func (c Client) QueryScenesByPerformerID(ctx context.Context, performerID string
 			"input": input,
 		}
 
-		if err := c.client.Client.Post(ctx, "QueryScenes", stashBoxQueryScenesByStudioID, &response, vars); err != nil {
+		if err := c.client.Client.Post(ctx, "QueryScenes", stashBoxQueryScenesByPerformerID, &response, vars); err != nil {
 			return nil, err
 		}
 

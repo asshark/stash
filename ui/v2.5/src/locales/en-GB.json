@@ -1831,9 +1831,7 @@
     "select_stash_id": "Stash ID",
     "no_stash_ids": "No Stash IDs available",
     "generate_report": "Generate Report",
-    "report_title": "Missing Scenes Report",
     "report_total_local": "Local scenes:",
-    "report_local_missing_stash_id": "Local scenes without Stash ID:",
     "report_total_remote": "StashBox scenes:",
     "report_missing": "Missing scenes:",
     "report_empty": "No missing scenes found."
@@ -1845,10 +1843,18 @@
     "select_stash_id": "Stash ID",
     "no_stash_ids": "No Stash IDs available",
     "generate_report": "Generate Report",
-    "report_title": "Missing Scenes Report",
     "report_total_local": "Local scenes:",
     "report_total_remote": "StashBox scenes:",
     "report_missing": "Missing scenes:",
     "report_empty": "No missing scenes found."
+  },
+  "missing_scenes": {
+    "tab_label": "Missing",
+    "search_placeholder": "Search by title, performers or studio…",
+    "sort_by_date": "Date",
+    "sort_by_title": "Title",
+    "sort_by_studio": "Studio",
+    "sort_by_performers": "Performers",
+    "no_results": "No results match the search."
   }
 }

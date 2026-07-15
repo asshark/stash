@@ -30,6 +30,7 @@ import {
   StudioDetailsPanel,
 } from "./StudioDetailsPanel";
 import { StudioGroupsPanel } from "./StudioGroupsPanel";
+import { StudioMissingPanel } from "./StudioMissingPanel";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { RatingSystem } from "src/components/Shared/Rating/RatingSystem";
 import { DetailImage } from "src/components/Shared/DetailImage";
@@ -70,6 +71,7 @@ const validTabs = [
   "performers",
   "groups",
   "childstudios",
+  "missing",
 ] as const;
 type TabKey = (typeof validTabs)[number];
 
@@ -86,6 +88,7 @@ const StudioTabs: React.FC<{
   const [showAllDetails, setShowAllDetails] = useState<boolean>(
     showAllCounts && studio.child_studios.length > 0
   );
+  const [missingCount, setMissingCount] = useState<number | undefined>(undefined);
 
   const sceneCount =
     (showAllDetails ? studio.scene_count_all : studio.scene_count) ?? 0;
@@ -255,6 +258,26 @@ const StudioTabs: React.FC<{
         <StudioChildrenPanel
           active={activeTabKey === "childstudios"}
           studio={studio}
+        />
+      </Tab>
+
+      <Tab
+        eventKey="missing"
+        title={
+          missingCount !== undefined ? (
+            <TabTitleCounter
+              messageID="missing_scenes.tab_label"
+              count={missingCount}
+              abbreviateCounter={abbreviateCounter}
+            />
+          ) : (
+            <FormattedMessage id="missing_scenes.tab_label" />
+          )
+        }
+      >
+        <StudioMissingPanel
+          studio={studio}
+          onMissingCountChange={setMissingCount}
         />
       </Tab>
     </Tabs>

@@ -27,6 +27,7 @@ import { PerformerGalleriesPanel } from "./PerformerGalleriesPanel";
 import { PerformerGroupsPanel } from "./PerformerGroupsPanel";
 import { PerformerImagesPanel } from "./PerformerImagesPanel";
 import { PerformerAppearsWithPanel } from "./performerAppearsWithPanel";
+import { PerformerMissingPanel } from "./PerformerMissingPanel";
 import { PerformerEditPanel } from "./PerformerEditPanel";
 import { PerformerMergeModal } from "../PerformerMergeDialog";
 import { PerformerSubmitButton } from "./PerformerSubmitButton";
@@ -68,6 +69,7 @@ const validTabs = [
   "images",
   "groups",
   "appearswith",
+  "missing",
 ] as const;
 type TabKey = (typeof validTabs)[number];
 
@@ -80,6 +82,8 @@ const PerformerTabs: React.FC<{
   performer: GQL.PerformerDataFragment;
   abbreviateCounter: boolean;
 }> = ({ tabKey, performer, abbreviateCounter }) => {
+  const [missingCount, setMissingCount] = useState<number | undefined>(undefined);
+
   const populatedDefaultTab = useMemo(() => {
     let ret: TabKey = "scenes";
     if (performer.scene_count === 0) {
@@ -199,6 +203,26 @@ const PerformerTabs: React.FC<{
         <PerformerAppearsWithPanel
           active={activeTabKey === "appearswith"}
           performer={performer}
+        />
+      </Tab>
+
+      <Tab
+        eventKey="missing"
+        title={
+          missingCount !== undefined ? (
+            <TabTitleCounter
+              messageID="missing_scenes.tab_label"
+              count={missingCount}
+              abbreviateCounter={abbreviateCounter}
+            />
+          ) : (
+            <FormattedMessage id="missing_scenes.tab_label" />
+          )
+        }
+      >
+        <PerformerMissingPanel
+          performer={performer}
+          onMissingCountChange={setMissingCount}
         />
       </Tab>
     </Tabs>

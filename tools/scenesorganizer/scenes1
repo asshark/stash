@@ -1,0 +1,26 @@
+mutation OrganizeScenesByStudio_ClipsStudiosSet1 {
+  sandboxOrganizeScenesByStudio(
+    input: {
+      studioDirectories: [
+        { studioName: "21 Bonus", 											directoryPath: "L:\\ClipsStudiosSet1\\21\\21 Bonus" }
+        { studioName: "21 Sextreme (Network)", 					directoryPath: "L:\\ClipsStudiosSet1\\21\\21 Sextreme (Network)" }
+        { studioName: "21 Sextury (Network)", 					directoryPath: "L:\\ClipsStudiosSet1\\21\\21 Sextury (Network)" }
+        
+        { studioName: "Anal Vids", 											directoryPath: "L:\\ClipsStudiosSet1\\Anal Vids" }
+
+        { studioName: "Angelo Godshack Original"    		directoryPath: "L:\\ClipsStudiosSet1\\Angelo Godshack Original" }
+        
+        { studioName: "DDF Network", 										directoryPath: "L:\\ClipsStudiosSet1\\DDF Network" excludedChildStudios: ["DDFNetworkVR"] }
+      ]
+      dryMode: false
+      dryRunLogPath: "L:\\ClipsStudiosSet1\\organize_ClipsStudiosSet1.log"
+      groupByYear: true
+      reFormatFileName: true
+      fileNameFormat: "{{.Performers}} - {{.Title}} [{{.StudioPath}}]{{if .Date}} ({{.Date}}){{end}}"
+      filenamePlaceholders: {
+        performers: { genderFilter: FEMALE, separator: ", ", sortBy: NAME }
+        studioPath: { studioJoiner: "_", stripWhitespaceFromStudioNames: true }
+      }
+    }
+  )
+}
