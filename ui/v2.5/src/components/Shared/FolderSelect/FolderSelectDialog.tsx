@@ -11,7 +11,6 @@ interface IProps {
   allowOnDirectoryDuplicateChecker?: boolean; // If false, dialog won't render on /directoryDuplicateChecker
 }
 
-
 export const FolderSelectDialog: React.FC<IProps> = ({
   defaultValue: currentValue,
   onClose,
@@ -23,54 +22,22 @@ export const FolderSelectDialog: React.FC<IProps> = ({
     currentValue ?? ""
   );
 
-  const shouldShowModal = show && 
-    (location.pathname === "/settings" || location.pathname === "/setup" || 
-     (location.pathname.startsWith("/directoryDuplicateChecker") && allowOnDirectoryDuplicateChecker));
-  
-  // CRITICAL: Don't render Modal at all if it shouldn't be visible
-  // This prevents Modal from staying visible through Portal after navigation
-  if (!shouldShowModal) {
-    return null;
-  }
-  
-  // CRITICAL: Don't render if show is false - check this FIRST before any other logic
-  if (!show) {
-    return null;
-  }
-  
-  // CRITICAL: If allowOnDirectoryDuplicateChecker is false, NEVER render on /directoryDuplicateChecker
-  // This prevents dialog from SettingsToolsPanel from appearing on DirectoryDuplicateChecker page
-  // Check this BEFORE any other location checks
-  if (!allowOnDirectoryDuplicateChecker && location.pathname.startsWith("/directoryDuplicateChecker")) {
-    return null;
-  }
-  
-  // CRITICAL: If we're not on /settings, /setup, or /directoryDuplicateChecker, don't render at all
-  if (location.pathname !== "/settings" && 
-      location.pathname !== "/setup" && 
-      !location.pathname.startsWith("/directoryDuplicateChecker")) {
-    return null;
-  }
+  const shouldShowModal =
+    show &&
+    (location.pathname === "/settings" ||
+      location.pathname === "/setup" ||
+      (location.pathname.startsWith("/directoryDuplicateChecker") &&
+        allowOnDirectoryDuplicateChecker));
 
-  // CRITICAL: Force close Modal if location changes and dialog shouldn't be visible
-  // This prevents Modal from staying visible through Portal after navigation
+  // Force close Modal if location changes and dialog shouldn't be visible.
+  // This prevents Modal from staying visible through Portal after navigation.
   useEffect(() => {
-    const shouldBeVisible = show && 
-      (location.pathname === "/settings" || location.pathname === "/setup" || 
-       (location.pathname.startsWith("/directoryDuplicateChecker") && allowOnDirectoryDuplicateChecker));
-    
-    if (!shouldBeVisible && show) {
+    if (!shouldShowModal && show) {
       onClose();
     }
-  }, [location.pathname, show, allowOnDirectoryDuplicateChecker, onClose]);
+  }, [shouldShowModal, show, onClose]);
 
-  // Don't render if we're not on allowed page
-  const isAllowedPage = location.pathname === "/settings" || 
-                       location.pathname === "/setup" || 
-                       location.pathname.startsWith("/directoryDuplicateChecker");
-  
-  // Don't render if we're not on an allowed page (show is already checked above)
-  if (!isAllowedPage) {
+  if (!shouldShowModal) {
     return null;
   }
 

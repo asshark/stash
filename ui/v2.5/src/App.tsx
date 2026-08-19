@@ -164,6 +164,13 @@ export const App: React.FC = () => {
   const [messages, setMessages] = useState<Record<string, string>>();
   const [customMessages, setCustomMessages] = useState<NestedMessage>();
 
+  // Keep <html lang> in sync with the UI language and disable browser translation.
+  // Chrome Translate rewrites text nodes and breaks React reconciliation (removeChild).
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.documentElement.setAttribute("translate", "no");
+  }, [language]);
+
   useEffect(() => {
     (async () => {
       try {

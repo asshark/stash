@@ -10,7 +10,6 @@ import { ErrorMessage } from "../Shared/ErrorMessage";
 import { Icon } from "../Shared/Icon";
 import { faTrash, faPlus, faSearch, faEraser } from "@fortawesome/free-solid-svg-icons";
 import { FolderSelectDialog } from "../Shared/FolderSelect/FolderSelectDialog";
-import { useMonitorJob } from "src/utils/job";
 import { ScanProgress } from "./ScanProgress";
 
 const CLEAR_DOWNLOAD_DIRECTORY_SCANS = gql`
@@ -35,16 +34,12 @@ export const DirectoryDuplicateChecker: React.FC = () => {
   const [scanningJobId, setScanningJobId] = useState<string | undefined>();
   const [scanningDirectoryId, setScanningDirectoryId] = useState<string | undefined>();
 
-  // Check if we're on the scan report page
-  const isOnReportPage = location.pathname.startsWith("/directoryDuplicateChecker/scan/");
+  // Defensive: this route is exact, but keep skip in sync if the component is reused.
+  const isOnReportPage = location.pathname.startsWith(
+    "/directoryDuplicateChecker/scan/"
+  );
 
-  // Don't render if we're on the scan report page
-  if (isOnReportPage) {
-    return null;
-  }
-
-  // Upewnij się, że dialog dodawania katalogu jest zamknięty przy wejściu na stronę
-  // oraz po każdej zmianie ścieżki (np. powrót z raportu skanowania).
+  // Close add-directory dialog when entering the page or returning from a scan report.
   useEffect(() => {
     setShowAddDialog(false);
   }, [location.pathname]);
@@ -452,73 +447,59 @@ export const DirectoryDuplicateChecker: React.FC = () => {
 
         {directories.length === 0 ? (
           <Row>
-              <Col>
+            <Col>
               <Card>
                 <Card.Body>
                   <FormattedMessage id="directory_duplicate_checker.no_directories" />
                 </Card.Body>
               </Card>
-              </Col>
-            </Row>
+            </Col>
+          </Row>
         ) : (
-            <Table striped bordered className="table-list">
+          <div className="table-list">
+            <Table striped bordered>
               <thead>
                 <tr>
-                <th>
-                  <FormattedMessage id="name" />
-                </th>
+                  <th>
+                    <FormattedMessage id="name" />
+                  </th>
                   <th>
                     <FormattedMessage id="path" />
                   </th>
                   <th>
-                  <FormattedMessage id="directory_duplicate_checker.last_scan" />
+                    <FormattedMessage id="directory_duplicate_checker.last_scan" />
                   </th>
                   <th>
-                  <FormattedMessage id="actions.actions" />
+                    <FormattedMessage id="actions.actions" />
                   </th>
                 </tr>
               </thead>
               <tbody>
-              {directories.map((dir: any) => (
-                <DirectoryRow
-                  key={dir.id}
-                  directory={dir}
-                  isScanning={dir.id === scanningDirectoryId && !!scanningJobId}
-                  onRemove={handleRemoveDirectory}
-                  onStartScan={handleStartScan}
-                  onViewReport={handleViewReport}
-                  onClearScans={handleClearScans}
-                />
-              ))}
-            </tbody>
-          </Table>
+                {directories.map((dir: any) => (
+                  <DirectoryRow
+                    key={dir.id}
+                    directory={dir}
+                    isScanning={
+                      dir.id === scanningDirectoryId && !!scanningJobId
+                    }
+                    onRemove={handleRemoveDirectory}
+                    onStartScan={handleStartScan}
+                    onViewReport={handleViewReport}
+                    onClearScans={handleClearScans}
+                  />
+                ))}
+              </tbody>
+            </Table>
+          </div>
         )}
 
-        {(() => {
-          console.log("=== DirectoryDuplicateChecker RENDERING DIALOG CHECK ===", {
-            showAddDialog,
-            location: location.pathname,
-            timestamp: new Date().toISOString(),
-          });
-          
-          if (!showAddDialog) {
-                              return null;
-                            }
-                            
-          console.log("=== DirectoryDuplicateChecker RENDERING DIALOG ===", {
-            showAddDialog,
-            location: location.pathname,
-            timestamp: new Date().toISOString(),
-          });
-          
-          return (
-            <FolderSelectDialog 
-              show={showAddDialog}
-              allowOnDirectoryDuplicateChecker={true}
-              onClose={handleAddDirectory} 
-            />
-          );
-        })()}
+        {showAddDialog && (
+          <FolderSelectDialog
+            show={showAddDialog}
+            allowOnDirectoryDuplicateChecker={true}
+            onClose={handleAddDirectory}
+          />
+        )}
 
         {scanningJobId && scanningDirectoryId && (
           <ScanProgress
@@ -631,39 +612,45 @@ const DirectoryRow: React.FC<DirectoryRowProps> = ({
         )[0]
       : undefined;
   const hasLastScan = !!lastScan;
-                              
-                              return (
+
+  return (
     <tr>
-      <td>{directory.name}</td>
-      <td className="text-break">{directory.path}</td>
       <td>
-        {hasLastScan ? (
-          <>
-            <FormattedDate
-              value={new Date(lastScan.scan_completed_at!)}
-              year="numeric"
-              month="short"
-              day="numeric"
-              hour="2-digit"
-              minute="2-digit"
-            />
-            {lastScan.duplicates_found > 0 && (
-              <>
-                {" "}
-                (
-                <FormattedMessage
-                  id="directory_duplicate_checker.duplicates_found"
-                  values={{ count: lastScan.duplicates_found }}
-                />
-                )
-              </>
-            )}
-          </>
-                      ) : (
-                        <FormattedMessage id="none" />
-                      )}
-                    </td>
-                    <td>
+        <span>{directory.name}</span>
+      </td>
+      <td className="text-break">
+        <span>{directory.path}</span>
+      </td>
+      <td>
+        <span>
+          {hasLastScan ? (
+            <>
+              <FormattedDate
+                value={new Date(lastScan.scan_completed_at!)}
+                year="numeric"
+                month="short"
+                day="numeric"
+                hour="2-digit"
+                minute="2-digit"
+              />
+              {lastScan.duplicates_found > 0 && (
+                <>
+                  {" "}
+                  (
+                  <FormattedMessage
+                    id="directory_duplicate_checker.duplicates_found"
+                    values={{ count: lastScan.duplicates_found }}
+                  />
+                  )
+                </>
+              )}
+            </>
+          ) : (
+            <FormattedMessage id="none" />
+          )}
+        </span>
+      </td>
+      <td>
         <Button
           variant="primary"
           size="sm"
@@ -694,15 +681,15 @@ const DirectoryRow: React.FC<DirectoryRowProps> = ({
             <FormattedMessage id="actions.clear" />
           </Button>
         )}
-                      <Button
-                        variant="danger"
-                        size="sm"
+        <Button
+          variant="danger"
+          size="sm"
           onClick={() => onRemove(directory.id)}
-                      >
-                        <Icon icon={faTrash} />
-                      </Button>
-                    </td>
-                  </tr>
+        >
+          <Icon icon={faTrash} />
+        </Button>
+      </td>
+    </tr>
   );
 };
 

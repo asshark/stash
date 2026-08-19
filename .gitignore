@@ -64,3 +64,15 @@ node_modules
 dist
 .DS_Store
 /.local*
+
+####
+# Stash OKF knowledge base (personal data, generated from local export)
+####
+/docs/sswiki/index.md
+/docs/sswiki/log.md
+/docs/sswiki/performers/
+/docs/sswiki/scenes/
+/docs/sswiki/tags/
+/docs/sswiki/studios/
+/docs/sswiki/groups/
+/docs/sswiki/galleries/
