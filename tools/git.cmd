@@ -510,7 +510,7 @@ if defined BEHIND (
 )
 
 echo Uruchamiam: git push --force-with-lease fork !GIT_BRANCH!
-git -c "credential.https://github.com.helper=" -c "credential.https://github.com.helper=!gh auth git-credential" push --force-with-lease fork !GIT_BRANCH!
+git push --force-with-lease fork !GIT_BRANCH!
 if errorlevel 1 (
     echo [git.cmd] Push na fork nie powiodl sie.
     exit /b 1
