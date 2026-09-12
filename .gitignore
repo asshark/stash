@@ -76,3 +76,9 @@ dist
 /docs/sswiki/studios/
 /docs/sswiki/groups/
 /docs/sswiki/galleries/
+
+####
+# Local artifacts too large for GitHub (keep on disk, do not commit)
+####
+/clips
+/stash-custom.tar

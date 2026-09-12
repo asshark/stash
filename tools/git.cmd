@@ -36,6 +36,7 @@ if /i "%~1"=="6" goto verify_rebase
 if /i "%~1"=="7" goto build_release
 if /i "%~1"=="8" goto install_stash
 if /i "%~1"=="9" goto backup_stash
+if /i "%~1"=="p" goto push_fork
 if /i "%~1"=="start-stash" goto start_stash
 if /i "%~1"=="check-remote" goto check_remote
 if /i "%~1"=="show-remote" goto show_remote
@@ -46,6 +47,7 @@ if /i "%~1"=="verify" goto verify_rebase
 if /i "%~1"=="build-release" goto build_release
 if /i "%~1"=="install-stash" goto install_stash
 if /i "%~1"=="backup-stash" goto backup_stash
+if /i "%~1"=="push-fork" goto push_fork
 if /i "%~1"=="help" goto help
 if /i "%~1"=="/?" goto help
 if /i "%~1"=="--help" goto help
@@ -68,6 +70,7 @@ echo  6. Sprawdz czy wszystko pobrane i brak konfliktow po rebase
 echo  7. Zbuduj release (mingw32-make release)
 echo  8. Skopiuj stash.exe do !STASH_BIN!
 echo  9. Backup stash.exe, bazy i config do !STASH_BACKUP!
+echo  p. Wypchnij develop na wlasny fork (asshark/stash)
 echo.
 echo  help - pomoc
 echo  q lub Enter - wyjscie
@@ -89,6 +92,7 @@ if /i "!CHOICE!"=="6" set "ACTION=verify_rebase"
 if /i "!CHOICE!"=="7" set "ACTION=build_release"
 if /i "!CHOICE!"=="8" set "ACTION=install_stash"
 if /i "!CHOICE!"=="9" set "ACTION=backup_stash"
+if /i "!CHOICE!"=="p" set "ACTION=push_fork"
 if /i "!CHOICE!"=="help" set "ACTION=help"
 if not defined ACTION (
     echo Nieznana opcja: !CHOICE!
@@ -272,6 +276,9 @@ if errorlevel 1 (
 )
 echo.
 git status -sb
+echo.
+echo Twoje commity sa na wierzchu officiala. Zeby zapisac je na fork:
+echo   git.cmd p
 exit /b 0
 
 :verify_rebase
@@ -469,6 +476,51 @@ if "!BACKUP_OK!"=="1" (
 echo [FAIL] Backup zakonczony z bledami.
 exit /b 1
 
+:push_fork
+echo.
+echo === p. Push na wlasny fork ===
+echo Galaz: !GIT_BRANCH!
+echo.
+
+git remote get-url fork >nul 2>&1
+if errorlevel 1 (
+    echo [git.cmd] Brak remote 'fork'.
+    echo Dodaj: git remote add fork https://github.com/asshark/stash.git
+    exit /b 1
+)
+
+for /f "delims=" %%U in ('git remote get-url fork') do echo Cel: %%U
+echo.
+
+git fetch origin
+if errorlevel 1 (
+    echo [WARN] git fetch origin nie powiodl sie - kontynuuje push.
+)
+
+for /f "tokens=1,2" %%A in ('git rev-list --left-right --count origin/!GIT_BRANCH!...HEAD 2^>nul') do (
+    set "BEHIND=%%A"
+    set "AHEAD=%%B"
+)
+if defined BEHIND (
+    echo Wzgledem origin/!GIT_BRANCH!: behind=!BEHIND! ahead=!AHEAD!
+    if not "!BEHIND!"=="0" (
+        echo [WARN] Najpierw dociagnij official ^(opcja 5^), potem znowu p.
+    )
+    echo.
+)
+
+echo Uruchamiam: git push --force-with-lease fork !GIT_BRANCH!
+git -c "credential.https://github.com.helper=" -c "credential.https://github.com.helper=!gh auth git-credential" push --force-with-lease fork !GIT_BRANCH!
+if errorlevel 1 (
+    echo [git.cmd] Push na fork nie powiodl sie.
+    exit /b 1
+)
+git branch -u origin/!GIT_BRANCH! >nul 2>&1
+echo.
+echo [OK] Wypchnieto na fork. Nie ruszono origin ^(stashapp/stash^).
+git status -sb
+exit /b 0
+
 :copy_db_file
 if "!DB_COPIED!"=="1" exit /b 0
 if not exist "%~1" exit /b 0
@@ -492,9 +544,10 @@ exit /b 0
 echo.
 echo Uzycie:
 echo   git.cmd
-echo   git.cmd 0 .. 9
+echo   git.cmd 0 .. 9 ^| p
 echo   git.cmd start-stash ^| check-remote ^| show-remote ^| status-local ^| commit-local
 echo   git.cmd pull-rebase ^| verify ^| build-release ^| install-stash ^| backup-stash
+echo   git.cmd push-fork
 echo   git.cmd commit-local "Wiadomosc commita"
 echo.
 echo Opcje:
@@ -508,6 +561,11 @@ echo   6  Sprawdz czy wszystko pobrane i brak konfliktow po rebase
 echo   7  Zbuduj release (mingw32-make release)
 echo   8  Skopiuj stash.exe do %STASH_BIN%
 echo   9  Backup stash.exe, bazy i config do %STASH_BACKUP%
+echo   p  Wypchnij biezaca galaz na remote fork ^(asshark/stash^)
+echo.
+echo Remotes:
+echo   origin  stashapp/stash   ^(tylko fetch / rebase, NIE push^)
+echo   fork    asshark/stash    ^(Twoje commity^)
 echo.
 echo Sciezki (edytuj na poczatku git.cmd):
 echo   STASH_HOME=%STASH_HOME%

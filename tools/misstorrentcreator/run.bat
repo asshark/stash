@@ -12,10 +12,9 @@ REM    run.bat "d:\torrents\WUNF.torrent" --studio-id 113
 REM    run.bat "d:\torrents\Pierre.torrent" --studio-id 24 --use-ai
 REM    run.bat "d:\torrents\Pierre.torrent" --studio-id 24 --use-ai --add-to-qbittorrent
 REM
-REM  Configure API keys:
-REM    1. Open this file in a text editor
-REM    2. Paste your key into GROQ_API_KEY (or OPENAI_API_KEY)
-REM    3. Save and run with arguments
+REM  Configure API keys (do NOT paste real keys into this file — GitHub
+REM  will reject the push. Set a user environment variable instead):
+REM    [Environment]::SetEnvironmentVariable("GROQ_API_KEY", "gsk_...", "User")
 REM
 REM  Groq API key (FREE):  https://console.groq.com/keys
 REM  OpenAI key (paid):    https://platform.openai.com/api-keys
